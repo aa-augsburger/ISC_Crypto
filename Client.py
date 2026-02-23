@@ -1,4 +1,5 @@
 import socket
+import MessageHandler
 
 #adresse et port du serveur
 server_adress = "vlbelintrocrypto.hevs.ch"
@@ -14,7 +15,8 @@ class Client():
 
 
     def send(self, text):
-        data = text.encode("utf-8")
+        data = text
+
         self.sock.send(data)
 
 #recevoir un message
