@@ -67,7 +67,7 @@ class vigenere_character_algorithm:
         decrypted_text = ''.join(decrypted_chars)
         #print(f"decrypted_chars: {decrypted_chars} decrypted_text: {decrypted_text}")
         return decrypted_text
-
+"""
 # Test avec l'approche caractère par caractère
 cipher2 = vigenere_character_algorithm()
 
@@ -79,3 +79,4 @@ print(f"Texte chiffré : {encrypted2}")
 
 decrypted2 = cipher2.vigenere_decrypt(encrypted2, key)
 print(f"Texte déchiffré : {decrypted2}")
+"""
