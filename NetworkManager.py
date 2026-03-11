@@ -7,6 +7,7 @@ class NetworkManager():
     def __init__(self, address, port):
 
         #adresse et port du serveur
+        self.sock = None
         self.server_adress = address
         self.server_port = port
 
@@ -34,7 +35,7 @@ class NetworkManager():
 
     # fermer la connection
     def close(self):
-        pass
+        self.sock.close()
 
 
 

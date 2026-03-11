@@ -2,9 +2,9 @@ from NetworkManager import NetworkManager
 
 
 class MessageHandler:
-    def __init__(self, address, port):
+    def __init__(self,nm):
         print("Message Handler Initiated")
-        self.networkManager = NetworkManager(address, port)
+        self.networkManager = nm
 
     # ==========================================
     # CONSTANTS
@@ -50,7 +50,8 @@ class MessageHandler:
                 if num <= 255:
                     output += chr(num)
                 else:
-                    num_bytes = num.to_bytes(2, byteorder='little')
+                    num_bytes = num.to_bytes(4, byteorder='little')
+                    num_bytes = num_bytes.rstr
                     output += num_bytes.decode('utf-8')
             except ValueError:
                 output += '*'

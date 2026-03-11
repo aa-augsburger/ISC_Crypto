@@ -7,11 +7,9 @@ PORT = 6000
 
 if __name__ == '__main__':
     print("Welcome to ISC Crypto")
-    messageHandler = MessageHandler(ADDRESS, PORT)
     client = Client(ADDRESS, PORT)
-    messageHandler.send_message("task shift encode 300", True)
     while True:
-      #  client.inputController()
-        msg = messageHandler.get_messages()
+        client.inputController()
+        msg = client.messageHandler.get_messages()
         print(f"Message recu : {msg}")
 
