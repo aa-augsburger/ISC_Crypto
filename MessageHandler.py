@@ -5,6 +5,7 @@ class MessageHandler:
     def __init__(self,nm):
         print("Message Handler Initiated")
         self.networkManager = nm
+        self.receptionBuffer = []
 
     # ==========================================
     # CONSTANTS
@@ -18,7 +19,6 @@ class MessageHandler:
     # ==========================================
     # INT <-> BYTES CONVERSION
     # ==========================================
-
     #Convertir entier en octet
 
     def int_to_bytes(self, value, num_bytes=BYTES_PER_CHAR):
@@ -51,7 +51,7 @@ class MessageHandler:
                     output += chr(num)
                 else:
                     num_bytes = num.to_bytes(4, byteorder='little')
-                    num_bytes = num_bytes.rstr
+                    num_bytes = num_bytes.rstrip(b'\x00')
                     output += num_bytes.decode('utf-8')
             except ValueError:
                 output += '*'
@@ -105,12 +105,18 @@ class MessageHandler:
 
     #réception séquentielle :
     #ajouter les nouvelles données recu dans un buffer
-    def add_data(self, data):
-        pass
+    def add_data(self,msg_awaited):
+        while len(self.receptionBuffer) < msg_awaited:
+            data = self.networkManager.receive()
+            msg = self.parse_text_message(data)
+            self.receptionBuffer.append(msg)
+
+
     #parcourir le buffer et extraire les messages bruts
     def get_messages(self):
-        data = self.networkManager.receive()
-        msg = self.parse_text_message(data)
+        output = self.receptionBuffer[0]
+        del self.receptionBuffer[0]
+        return output
         return msg
     # ==========================================
     # UTILITY FUNCTIONS

@@ -1,7 +1,6 @@
 import socket
 
 
-
 class NetworkManager():
 
     def __init__(self, address, port):
