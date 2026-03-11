@@ -9,9 +9,10 @@ if __name__ == '__main__':
     client = Client.Client(ADDRESS, PORT)
     messageHandler = MessageHandler()
 
-    message = messageHandler.create_text_message("Hello")
+    message = messageHandler.create_text_message("task shift encode 6", True)
+    print(message)
     client.send(message)
     while True:
         data = client.receive()
-        print(data)
+        print(f"Message recu : {messageHandler.parse_text_message(data)}")
 

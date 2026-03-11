@@ -22,7 +22,7 @@ class MessageHandler:
 
     #Convert octet en int
     def bytes_to_int(self, data):
-        output = data.fromBytes(data)
+        output = int.from_bytes(data.encode('utf-8'), byteorder='big')
         return output
     # ==========================================
     # STRING <-> INTEGER LIST CONVERSION
@@ -38,7 +38,10 @@ class MessageHandler:
     def ints_to_string(self, int_list):
         output = ""
         for num in int_list:
-            output += chr(num)
+            try:
+                output += chr(num)
+            except ValueError:
+                output += '*'
         return output
 
     # ==========================================
@@ -54,8 +57,10 @@ class MessageHandler:
 
     def decode_ints(self, data, bytes_per_int=BYTES_PER_CHAR):
         output = []
-        for byte in data:
-            output.append(self.bytes_to_int(byte))
+        length = len(data)
+        for i in range(0, length, bytes_per_int):
+            chunk = data[i:i + bytes_per_int] #on découpe en chunk de 4 bits
+            output.append(self.bytes_to_int(chunk))
         return output
     # ==========================================
     # TEXT ENCODING
@@ -69,11 +74,17 @@ class MessageHandler:
     # ISC MESSAGE CREATION
     # ==========================================
     #creer un message au format protocle ISC
-    def create_text_message(self, text, bytes_per_char = BYTES_PER_CHAR, is_server=False):
-        encoded_text = self.
-        output = self.ISC_HEADER + b't' +
+    def create_text_message(self, text, is_server=False, bytes_per_char = BYTES_PER_CHAR):
+        output = b''
+        msg_type = b's' if is_server else b't'
+        text_size = self.get_text_size(text)
+        encoded_text = b''.join(self.encode_string(text))
 
-    def create_image_message(slef, width, height, image_data):
+        output = self.ISC_HEADER + msg_type + text_size + encoded_text
+
+        return output
+
+    def create_image_message(self, width, height, image_data):
         pass
     # ==========================================
     # MESSAGE RECEPTION
@@ -92,9 +103,19 @@ class MessageHandler:
 
     #extraction final
     #prendre un message ISC brut et extraire le text en clair
-    def parse_text_message(self, message, bytes_per_char):
-        pass
+    def parse_text_message(self, message, bytes_per_char = BYTES_PER_CHAR):
+        payload = message[6:] #On ne prend pas les 6 premier 0ctet 2 * 3
+        print(f"payload : {payload}")
+        int_list = self.decode_ints(payload)
+        output = self.ints_to_string(int_list)
+        return output
+
 
     #extraire les données des pixels RGB d'un message ISC avec image dedans
     def parse_image_message(self, message):
-        print("salut")
+        pass
+
+    def get_text_size(self, text, bytes_per_char = BYTES_PER_CHAR):
+        length = len(text)
+        length_in_bytes = length.to_bytes(2, byteorder='big')
+        return length_in_bytes

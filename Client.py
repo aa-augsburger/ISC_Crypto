@@ -22,9 +22,7 @@ class Client():
             print(f"failed : {e}")
 
 
-    def send(self, text):
-        text = f"ISCt{len(text)}{text}"
-        data = text.encode("utf-8")
+    def send(self, data):
         self.sock.send(data)
 
     # recevoir un message
