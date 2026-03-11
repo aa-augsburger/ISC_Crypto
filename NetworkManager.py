@@ -2,7 +2,7 @@ import socket
 
 
 
-class Client():
+class NetworkManager():
 
     def __init__(self, address, port):
 
@@ -28,9 +28,7 @@ class Client():
     # recevoir un message
     def receive(self):
         response = self.sock.recv(1024)
-        decoded = response.decode("utf-8", errors="ignore")
-        print(decoded)
-        return decoded
+        return response
 
 
 

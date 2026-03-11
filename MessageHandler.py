@@ -1,6 +1,10 @@
+from NetworkManager import NetworkManager
+
+
 class MessageHandler:
-    def __init__(self):
+    def __init__(self, address, port):
         print("Message Handler Initiated")
+        self.networkManager = NetworkManager(address, port)
 
     # ==========================================
     # CONSTANTS
@@ -9,6 +13,7 @@ class MessageHandler:
     BYTES_PER_CHAR = 4
     IMAGE_WIDTH = 128
     IMAGE_HEIGHT = 128
+
 
     # ==========================================
     # INT <-> BYTES CONVERSION
@@ -22,7 +27,10 @@ class MessageHandler:
 
     #Convert octet en int
     def bytes_to_int(self, data):
-        output = int.from_bytes(data.encode('utf-8'), byteorder='big')
+        try:
+            output = int.from_bytes(data, byteorder='big')
+        except ValueError:
+            print(f"Erreur : {data}")
         return output
     # ==========================================
     # STRING <-> INTEGER LIST CONVERSION
@@ -39,7 +47,11 @@ class MessageHandler:
         output = ""
         for num in int_list:
             try:
-                output += chr(num)
+                if num <= 255:
+                    output += chr(num)
+                else:
+                    num_bytes = num.to_bytes(2, byteorder='little')
+                    output += num_bytes.decode('utf-8')
             except ValueError:
                 output += '*'
         return output
@@ -96,7 +108,9 @@ class MessageHandler:
         pass
     #parcourir le buffer et extraire les messages bruts
     def get_messages(self):
-        pass
+        data = self.networkManager.receive()
+        msg = self.parse_text_message(data)
+        return msg
     # ==========================================
     # UTILITY FUNCTIONS
     # ==========================================
@@ -119,3 +133,11 @@ class MessageHandler:
         length = len(text)
         length_in_bytes = length.to_bytes(2, byteorder='big')
         return length_in_bytes
+
+    # ==========================================
+    #  MESSAGE SENDING
+    # ==========================================
+
+    def send_message(self, message, isServer=False):
+        msg = self.create_text_message(message, isServer)
+        self.networkManager.send(msg)
