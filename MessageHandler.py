@@ -51,7 +51,7 @@ class MessageHandler:
                     output += chr(num)
                 else:
                     num_bytes = num.to_bytes(4, byteorder='little')
-                    num_bytes = num_bytes.rstr
+                    num_bytes = num_bytes.rstrip(b'\x00')
                     output += num_bytes.decode('utf-8')
             except ValueError:
                 output += '*'
@@ -105,13 +105,19 @@ class MessageHandler:
 
     #réception séquentielle :
     #ajouter les nouvelles données recu dans un buffer
-    def add_data(self, data):
-        pass
+    def add_data(self, msg_awaited):
+        buffer = []
+        msg_rcv = 0
+        while msg_rcv < msg_awaited:
+            data = self.networkManager.receive()
+            msg = self.parse_text_message(data)
+            buffer.append(msg)
+            msg_rcv += 1
+        return buffer
     #parcourir le buffer et extraire les messages bruts
-    def get_messages(self):
-        data = self.networkManager.receive()
-        msg = self.parse_text_message(data)
-        return msg
+    def get_messages(self, buffer):
+        for msg in buffer:
+            print(msg)
     # ==========================================
     # UTILITY FUNCTIONS
     # ==========================================

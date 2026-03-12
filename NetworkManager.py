@@ -37,6 +37,3 @@ class NetworkManager():
     def close(self):
         self.sock.close()
 
-
-
-

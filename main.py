@@ -9,7 +9,5 @@ if __name__ == '__main__':
     print("Welcome to ISC Crypto")
     client = Client(ADDRESS, PORT)
     while True:
-        client.inputController()
-        msg = client.messageHandler.get_messages()
-        print(f"Message recu : {msg}")
+        client.command_controller()
 

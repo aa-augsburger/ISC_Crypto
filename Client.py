@@ -8,64 +8,73 @@ class Client:
         self.messageHandler = MessageHandler(self.networkManager)
 
 
-    def inputController(self):
+    def command_controller(self):
         input = self.getInput()
-        command = self.parseInput(input)
-        print(command)
-
+        msg_awaited = self.parseInput(input)
+        print(msg_awaited)
+        buffer = self.messageHandler.add_data(msg_awaited)
+        self.messageHandler.get_messages(buffer)
     def getInput(self):
         inp = input("Entrer votre commande : ")
         return inp
 
     def parseInput(self, input):
         inputTab = input.split(" ")
-        match len(inputTab):
-            case 0:
-                self.send_msg(inputTab[0])
-            case 1:
-                match inputTab[0]:
-                    case "/help":
-                        self.help()
-                    case "/health":
-                        pass
-                    case "/exit"  | "/quit" | "/q":
-                        pass
-                    case "":
-                         pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
-                    case "":
-                        pass
+        msg_awaited = 0
 
-    def send_msg(self, msg):
-        self.messageHandler.sendMessage(self.networkManager, msg, True)
+        if(inputTab[0][0] != "/"):
+            self.send_command(input)
+            msg_awaited = 2
+        else:
+            match len(inputTab):
+                case 0:
+                    pass
+                case 1:
+                    match inputTab[0]:
+                        case "/help":
+                            self.help()
+                        case "/health":
+                            pass
+                        case "/exit"  | "/quit" | "/q":
+                            pass
+                        case "":
+                             pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+                        case "":
+                            pass
+
+        return msg_awaited
+
+    def send_command(self, msg):
+        self.messageHandler.send_message(msg, True)
 
     def help(self):
-        print("Commande : /help")
+        print("Commande  appelé: /help")
 
     def exit(self):
         pass
