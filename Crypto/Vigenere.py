@@ -1,11 +1,11 @@
 
-def resizeKey(self, plaintext, key):
+def resizeKey(plaintext, key):
         newKey = ""
         for i in range(len(plaintext)):
             newKey += key[i % len(key)]
         return newKey
 
-def vigenere_encrypt(self, plaintext, key):
+def vigenere_encrypt(plaintext, key):
         print(f"plaintext: {plaintext}, key: {key}")
 
         """"Chiffre un texte caractère par caractère"""
@@ -14,7 +14,7 @@ def vigenere_encrypt(self, plaintext, key):
         #print(f"plain_chars: {plain_chars}")
 
         # Redimensionner la clé
-        newKey = self.resizeKey(plaintext, key)
+        newKey = resizeKey(plaintext, key)
         key_chars = list(newKey)
         #print(f"newKey: {newKey}, key_chars: {key_chars}")
 
@@ -38,7 +38,7 @@ def vigenere_encrypt(self, plaintext, key):
         #print(f"encrypted_text : {encrypted_text}, encrypted_hex : {encrypted_hex}")
         return encrypted_text
 
-def vigenere_decrypt(self, ciphertext, key):
+def vigenere_decrypt(ciphertext, key):
         """Déchiffre un texte chiffré"""
 
         # Obtenir les caractères
@@ -46,7 +46,7 @@ def vigenere_decrypt(self, ciphertext, key):
         #print(f"encrypted_text : {encrypted_text}, encrypted_chars : {encrypted_chars}")
 
         # Redimensionner la clé
-        newKey = self.resizeKey(ciphertext, key)
+        newKey = resizeKey(ciphertext, key)
         key_chars = list(newKey)
         #print(f"newKey: {newKey}, key_chars: {key_chars}")
 

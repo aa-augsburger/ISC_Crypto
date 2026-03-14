@@ -7,6 +7,7 @@ AVAILABLE COMMANDS
 /send <text>|plain|encoded [-s]     - Send text or buffer
 /clear                              - Clear the screen
 /clearbuf [plain|encoded]           - Clear buffers
+/debug [true|false                  - Enable or disable debug mode
 /set <plain|encoded> <text>         - Set buffer
 /show                               - Show current buffers
 /list [n]                           - Show last n messages (default 10)

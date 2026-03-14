@@ -4,6 +4,7 @@ from NetworkManager import NetworkManager
 class MessageHandler:
     def __init__(self,nm):
         print("Message Handler Initiated")
+        self.debug_mode = False
         self.networkManager = nm
 
     # ==========================================
@@ -111,6 +112,9 @@ class MessageHandler:
         while msg_rcv < msg_awaited:
             data = self.networkManager.receive()
             msg = self.parse_text_message(data)
+            if msg == "Unknown command or no task running":
+                print("Message invalide")
+                break
             buffer.append(msg)
             msg_rcv += 1
         return buffer
@@ -126,7 +130,7 @@ class MessageHandler:
     #prendre un message ISC brut et extraire le text en clair
     def parse_text_message(self, message, bytes_per_char = BYTES_PER_CHAR):
         payload = message[6:] #On ne prend pas les 6 premier 0ctet 2 * 3
-        print(f"payload : {payload}")
+        if self.debug_mode: print(f"payload : {payload}")
         int_list = self.decode_ints(payload)
         output = self.ints_to_string(int_list)
         return output

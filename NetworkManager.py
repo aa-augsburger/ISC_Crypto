@@ -8,6 +8,7 @@ class NetworkManager():
 
         #adresse et port du serveur
         self.sock = None
+        self.debug_mode = False
         self.server_adress = address
         self.server_port = port
 
