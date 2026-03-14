@@ -1,11 +1,11 @@
-class vigenere_character_algorithm:
-    def resizeKey(self, plaintext, key):
+
+def resizeKey(self, plaintext, key):
         newKey = ""
         for i in range(len(plaintext)):
             newKey += key[i % len(key)]
         return newKey
 
-    def vigenere_encrypt(self, plaintext, key):
+def vigenere_encrypt(self, plaintext, key):
         print(f"plaintext: {plaintext}, key: {key}")
 
         """"Chiffre un texte caractère par caractère"""
@@ -38,7 +38,7 @@ class vigenere_character_algorithm:
         #print(f"encrypted_text : {encrypted_text}, encrypted_hex : {encrypted_hex}")
         return encrypted_text
 
-    def vigenere_decrypt(self, ciphertext, key):
+def vigenere_decrypt(self, ciphertext, key):
         """Déchiffre un texte chiffré"""
 
         # Obtenir les caractères
