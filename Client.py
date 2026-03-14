@@ -3,6 +3,7 @@ import sys
 from MessageHandler import MessageHandler
 from NetworkManager import NetworkManager
 from Crypto.Shift import *
+from Crypto.Vigenere import *
 
 class Client:
 
@@ -50,28 +51,6 @@ class Client:
                             pass
                         case "":
                             pass
-                        case "":
-                            pass
-                        case "":
-                            pass
-                        case "":
-                            pass
-                        case "":
-                            pass
-                        case "":
-                            pass
-                        case "":
-                            pass
-                        case "":
-                            pass
-                        case "":
-                            pass
-                        case "":
-                            pass
-                        case "":
-                            pass
-                        case "":
-                            pass
                 case 2:
                     pass
                 case 3:
@@ -83,6 +62,14 @@ class Client:
                                     msg_awaited = 1
                                 case "vigenere":
                                     pass
+                        case "/decode":
+                            match inputTab[1]:
+                                case "shift":
+                                    self.decode_shift(self.buffer[1], inputTab[2])
+                                    msg_awaited = 1
+                                case "vigenere":
+                                    self.decode_vigenere(self.buffer[1], inputTab[2])
+                                    msg_awaited = 1
 
         return msg_awaited
 
@@ -128,8 +115,16 @@ class Client:
     def encode_shift(self, msg, shift_value):
         msg_encoded = shift(msg, int(shift_value))
         self.send_msg(msg_encoded)
-    def decode_shift(self):
-        pass
+    def decode_shift(self,encoded_msg, shift_value):
+        msg_decoded = unshift(encoded_msg,int(shift_value))
+        self.send_msg(msg_decoded)
+
+    def encode_vigenere(self, msg, key):
+        msg_encoded = vigenere_encrypt(msg,key)
+        self.send_msg(msg_encoded)
+    def decode_vigenere(self,encoded_msg, key):
+        msg_decoded = vigenere_decrypt(encoded_msg,key)
+        self.send_msg(msg_decoded)
 
     def exit(self):
         pass
