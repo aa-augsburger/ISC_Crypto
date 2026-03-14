@@ -36,4 +36,5 @@ class NetworkManager():
     # fermer la connection
     def close(self):
         self.sock.close()
+        print("connection closed")
 

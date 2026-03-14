@@ -1,7 +1,7 @@
 def shift(plaintext, shift_value):
     shifted_text=""
     for i in plaintext :
-        shifted_i = chr((ord(i) + shift_value)%128)
+        shifted_i = chr(ord(i) + shift_value)
         shifted_text +=shifted_i
     return shifted_text    
 
@@ -9,7 +9,7 @@ def shift(plaintext, shift_value):
 def unshift(plaintext, shift_value):
     unshifted_text=""
     for i in plaintext :
-        unshifted_i = chr((ord(i) - shift_value)%128)
+        unshifted_i = chr(ord(i) - shift_value)
         unshifted_text +=unshifted_i
     return unshifted_text    
 
