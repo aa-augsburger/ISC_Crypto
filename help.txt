@@ -10,6 +10,7 @@ AVAILABLE COMMANDS
 /debug [true|false                  - Enable or disable debug mode
 /set <plain|encoded> <text>         - Set buffer
 /show                               - Show current buffers
+/listen                             - Listen to the message on the server
 /list [n]                           - Show last n messages (default 10)
 /select <i> [e|c]                   - Select message for encoded/plain buffer
 /send <text>|plain|encoded [-s]     - Send text or buffer

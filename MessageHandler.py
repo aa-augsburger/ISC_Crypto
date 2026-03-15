@@ -41,19 +41,18 @@ class MessageHandler:
     def string_to_ints(self, text):
         output = []
         for c in text:
-            output.append(ord(c)) #ord donne la valeur ascii d'un char
+            utf8_bytes = c.encode('utf-8')
+            num = int.from_bytes(utf8_bytes, byteorder='little')
+            output.append(num)
         return output
     #convertir liste de nombre en text utf-8
     def ints_to_string(self, int_list):
         output = ""
         for num in int_list:
             try:
-                if num <= 255:
-                    output += chr(num)
-                else:
-                    num_bytes = num.to_bytes(4, byteorder='little')
-                    num_bytes = num_bytes.rstrip(b'\x00')
-                    output += num_bytes.decode('utf-8')
+                num_bytes = num.to_bytes(4, byteorder='little')
+                num_bytes = num_bytes.rstrip(b'\x00')
+                output += num_bytes.decode('utf-8')
             except ValueError:
                 output += '*'
         return output
@@ -88,14 +87,16 @@ class MessageHandler:
     # ISC MESSAGE CREATION
     # ==========================================
     #creer un message au format protocle ISC
-    def create_text_message(self, text, is_server=False, bytes_per_char = BYTES_PER_CHAR):
-        output = b''
+    def create_text_message(self, text, is_server=False, is_ints_list=False, bytes_per_char=BYTES_PER_CHAR):
         msg_type = b's' if is_server else b't'
         text_size = self.get_text_size(text)
-        encoded_text = b''.join(self.encode_string(text))
+
+        if is_ints_list:
+            encoded_text = b''.join(self.encode_ints(text))
+        else:
+            encoded_text = b''.join(self.encode_string(text))
 
         output = self.ISC_HEADER + msg_type + text_size + encoded_text
-
         return output
 
     def create_image_message(self, width, height, image_data):
@@ -112,8 +113,9 @@ class MessageHandler:
         while msg_rcv < msg_awaited:
             data = self.networkManager.receive()
             msg = self.parse_text_message(data)
-            if msg == "Unknown command or no task running":
-                print("Message invalide")
+            if msg == "Unknown command or no task running" or msg.startswith("Wrong"):
+
+                print(f"Message invalide - {msg}")
                 break
             buffer.append(msg)
             msg_rcv += 1
@@ -149,6 +151,6 @@ class MessageHandler:
     #  MESSAGE SENDING
     # ==========================================
 
-    def send_message(self, message, isServer=False):
-        msg = self.create_text_message(message, isServer)
+    def send_message(self, message, isServer=True, is_ints_list=False):
+        msg = self.create_text_message(message, isServer, is_ints_list)
         self.networkManager.send(msg)

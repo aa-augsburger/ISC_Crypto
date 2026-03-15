@@ -38,6 +38,26 @@ def vigenere_encrypt(plaintext, key):
         #print(f"encrypted_text : {encrypted_text}, encrypted_hex : {encrypted_hex}")
         return encrypted_text
 
+
+def resize_ints_key(ints_msg, ints_key):
+    new_key = []
+    for i in range(len(ints_msg)):
+        new_key.append(ints_key[i % len(ints_key)])
+    return new_key
+
+def int_vigenere_encrypt(msg_ints, key_ints, debug_mode = False):
+    if debug_mode: print(f"int_list_msg: {msg_ints}, int_list_key: {key_ints}")
+    output = []
+
+    # Redimensionner la clé
+    new_key_ints = resize_ints_key(msg_ints, key_ints)
+
+    for i in range(len(msg_ints)):
+       output.append(msg_ints[i] + new_key_ints[i])
+
+    return output
+
+
 def vigenere_decrypt(ciphertext, key):
         """Déchiffre un texte chiffré"""
 

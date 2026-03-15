@@ -1,3 +1,4 @@
+
 import sys
 
 from MessageHandler import MessageHandler
@@ -58,8 +59,8 @@ class Client:
                             self.show()
                         case "/list":
                             self.list(10)
-                        case "":
-                            pass
+                        case "/listen" | "/eavedrop":
+                            self.eavedrop()
                 case 2:
                     match inputTab[0]:
                         case "/debug":
@@ -101,6 +102,20 @@ class Client:
 
         for line in help_lines:
             print(line)
+
+    def eavedrop(self):
+        print("====== MODE ECOUTE ACTIVE ======")
+        print("Ctrl + C pour sortir")
+        try:
+            while True:
+                data = self.networkManager.receive()
+                if data:
+                    msg = self.messageHandler.parse_text_message(data)
+                    print(f"[EAVESDROP] {msg}")
+        except KeyboardInterrupt:
+            print("====== FIN DU MODE ECOUTE ======")
+            return
+
 
     def health(self):
         try:
@@ -152,18 +167,24 @@ class Client:
         self.message_list.append(f"Client : {msg}")
         self.send_msg(msg)
     def encode_shift(self, msg, shift_value):
-        msg_encoded = shift(msg, int(shift_value))
+        #msg_encoded = shift(msg, int(shift_value))
+        list_int = self.messageHandler.string_to_ints(msg)
+        msg_encoded = shift_int(list_int, shift_value)
         if self.debug_mode: print(f"Encryption : {msg_encoded}")
-        self.send_msg(msg_encoded)
+        self.send_msg(msg_encoded, True, True)
     def decode_shift(self,encoded_msg, shift_value):
         msg_decoded = unshift(encoded_msg,int(shift_value))
-        if self.debug_mode: print(f"Encryption : {msg_decoded}")
+
+        if self.debug_mode: print(f"Decryption : {msg_decoded}")
         self.send_msg(msg_decoded)
 
     def encode_vigenere(self, msg, key):
-        msg_encoded = vigenere_encrypt(msg,key)
+        #msg_encoded = vigenere_encrypt(msg,key)
+        msg_int = self.messageHandler.string_to_ints(msg)
+        key_int = self.messageHandler.string_to_ints(key)
+        msg_encoded = int_vigenere_encrypt(msg_int, key_int, self.debug_mode)
         if self.debug_mode: print(f"Encryption : {msg_encoded}")
-        self.send_msg(msg_encoded)
+        self.send_msg(msg_encoded, True, True)
     def decode_vigenere(self,encoded_msg, key):
         msg_decoded = vigenere_decrypt(encoded_msg,key)
         if self.debug_mode: print(f"Decryption : {msg_decoded}")
@@ -172,7 +193,6 @@ class Client:
     def exit(self):
         pass
 
-
-    def send_msg(self, msg):
-        self.messageHandler.send_message(msg, True)
+    def send_msg(self, msg, is_server=True, is_ints_list=False):
+        self.messageHandler.send_message(msg, is_server, is_ints_list)
 
