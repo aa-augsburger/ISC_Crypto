@@ -1,6 +1,8 @@
 
 import math
 import random
+from MessageHandler import MessageHandler
+
 """
 Key Generation from ISC Crypto course
 
@@ -102,16 +104,47 @@ def decrypt_message_byte_by_byte(encrypted_bytes, private_key):
 
 
 
+
+
+
+#=====================================================================================
+#                                       TEST
+#=====================================================================================
+"""
+def string_to_ints(text):
+    output = []
+    for c in text:
+        utf8_bytes = c.encode('utf-8')
+        num = int.from_bytes(utf8_bytes, byteorder='little')
+        output.append(num)
+    return output
+
+#convertir liste de nombre en text utf-8
+def ints_to_string(int_list):
+    output = ""
+    for num in int_list:
+        try:
+            num_bytes = num.to_bytes(4, byteorder='little')
+            num_bytes = num_bytes.rstrip(b'\x00')
+            output += num_bytes.decode('utf-8')
+        except ValueError:
+            output += '*'
+    return output
+
+
 public_key, private_key = generate_keypair()
 print(f"Public Key (n, e): {public_key}")
 print(f"Private Key (n, d): {private_key}")
 
 message = "ISC Hello World"
+int_message = string_to_ints(message)
 
 print(f"Before Encrypted : {message}")
 
-encrypted_bytes = encrypt_message_byte_by_byte(message, public_key)
+encrypted_bytes = encrypt_message_byte_by_byte(int_message, public_key)
 print(f"After Encrypted : {encrypted_bytes}")
 
 decrypted = decrypt_message_byte_by_byte(encrypted_bytes, private_key)
-print(f"After Decrypted : {decrypted}")
+msg_decrypted = ints_to_string(decrypted)
+print(f"After Decrypted : {msg_decrypted}")
+"""

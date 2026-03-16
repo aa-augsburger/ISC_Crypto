@@ -8,6 +8,7 @@ from MessageHandler import MessageHandler
 from NetworkManager import NetworkManager
 from Crypto.Shift import *
 from Crypto.Vigenere import *
+from Crypto.RSA import *
 
 class Client:
 
@@ -24,6 +25,7 @@ class Client:
     def command_controller(self):
         input = self.getInput()
         self.message_list.append(f"Commande : {input}")
+        parsing_return = (0,0)
         try:
             parsing_return = self.parseInput(input)
         except Exception as e:
@@ -83,6 +85,9 @@ class Client:
                                 self.debug(False)
                         case "/list":
                             self.list(inputTab[1])
+                        case "/rsa":
+                            if inputTab[1] == "generate":
+                                self.rsa_generate()
                         case "/decode":
                             match inputTab[1]:
                                 case "shift":
@@ -230,4 +235,14 @@ class Client:
 
     def send_msg(self, msg, is_server=True, is_ints_list=False):
         self.messageHandler.send_message(msg, is_server, is_ints_list)
+
+    def rsa_generate(self):
+        rsa_keys = generate_keypair()
+        print(f"====== RSA Public Key =======")
+        print(f"MODULO : {rsa_keys[0][0]} - KEY {rsa_keys[0][1]}")
+        print("====== RSA Private Key ======")
+        print(f"MODULO : {rsa_keys[1][0]} - KEY {rsa_keys[1][1]}")
+        print(f"==============================")
+
+        return rsa_keys
 
