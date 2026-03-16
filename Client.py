@@ -1,5 +1,8 @@
 import msvcrt
+import threading
 import sys
+
+import time
 
 from MessageHandler import MessageHandler
 from NetworkManager import NetworkManager
@@ -15,12 +18,17 @@ class Client:
         self.buffer = []
         self.message_list = []
         self.debug(True)
+        self.receiver_is_active = False
 
 
     def command_controller(self):
         input = self.getInput()
         self.message_list.append(f"Commande : {input}")
-        parsing_return = self.parseInput(input)
+        try:
+            parsing_return = self.parseInput(input)
+        except Exception as e:
+            print(f"Erreur dans le parsing {e}")
+
         msg_awaited = parsing_return[0]
         change_buffer = parsing_return[1]
         if change_buffer:
@@ -64,8 +72,8 @@ class Client:
                             self.show()
                         case "/list":
                             self.list(10)
-                        case "/listen" | "/eavedrop":
-                            self.eavedrop()
+                        case "/chat":
+                            self.chat()
                 case 2:
                     match inputTab[0]:
                         case "/debug":
@@ -79,8 +87,10 @@ class Client:
                             match inputTab[1]:
                                 case "shift":
                                     print("Tentative de décodage")
-                                    if len(self.buffer) == 1: self.decode_shift(self.buffer[1])
-                                    else: print("Pas de message à décoder")
+                                    try:
+                                        if len(self.buffer) == 2: self.decode_shift(self.buffer[1])
+                                    except Exception as e: print(f"Erreur dans le décodage - {e}")
+                                    if len(self.buffer) == 0: print("Pas de message à décoder")
                                     msg_awaited = 0
                                     change_buffer = True
                                 case "vigenere":
@@ -112,24 +122,30 @@ class Client:
         for line in help_lines:
             print(line)
 
-    def eavedrop(self):
-        print("===== MODE ECOUTE =====")
-        try:
-            while True:
-                data = self.networkManager.receive()
-                if data:
-                    msg = self.messageHandler.parse_text_message(data)
-                    print(f"[EAVESDROP] {msg}")
-                if msvcrt.kbhit():
-                    key = msvcrt.getch().decode().lower()
-                    if key == 'q':
-                        print("\n===== FIN DU MODE ECOUTE =====")
-                        break
-        except Exception as e:
-            print(f"[ERREUR] {e}")
+    def chat(self):
+        print("===== MODE CHAT =====")
+        print("Presssez q + Enter pour quiter")
+        self.receiver_is_active = True
+        thread = threading.Thread(target=self.receive_loop, daemon=True)
+        thread.start()
 
+        while True:
+            msg = input()
+            if msg == "q":
+                print("\n===== FIN DU MODE CHAT =====")
+                self.receiver_is_active = False
+                break
+            else:
+                self.send_msg(msg, False, False)
 
+            time.sleep(1)
 
+    def receive_loop(self):
+        while self.receiver_is_active:
+            data = self.networkManager.receive()
+            if data:
+                msg = self.messageHandler.parse_text_message(data)
+                print(f"[FROM SERVER] {msg}")
 
     def health(self):
         try:
@@ -141,7 +157,7 @@ class Client:
         if(len(self.messageHandler.add_data(1)) != 0):
             print("Connecté au serveur")
         else:
-            print("Connecté au serveur, mais de message de retour")
+            print("Connecté au serveur, mais pas de message de retour")
 
     def quit(self):
         self.networkManager.close()
@@ -190,9 +206,10 @@ class Client:
         encoded_int = self.messageHandler.string_to_ints(encoded_msg)
         if self.debug_mode: print(f"Encoded Int : {encoded_int}")
         unshifted_int = decode_shift_int(encoded_int)
+        shift = 0
         for i in unshifted_int:
-            print(self.messageHandler.ints_to_string(i))
-        if self.debug_mode: print(f"Encoded Int : {encoded_int}")
+            print(f"Shift {shift} : {self.messageHandler.ints_to_string(i)}")
+            shift += 1
 
 #        self.send_msg()
 

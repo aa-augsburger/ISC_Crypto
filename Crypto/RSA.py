@@ -100,19 +100,18 @@ def decrypt_message_byte_by_byte(encrypted_bytes, private_key):
 
     return bytes(decrypted)
 
-def main():
-    """
-    public_key, private_key = generate_keypair()
-    print(f"Public Key (n, e): {public_key}")
-    print(f"Private Key (n, d): {private_key}")
 
-    message = "ISC Hello World"
 
-    print(f"Before Encrypted : {message}")
+public_key, private_key = generate_keypair()
+print(f"Public Key (n, e): {public_key}")
+print(f"Private Key (n, d): {private_key}")
 
-    encrypted_bytes = encrypt_message_byte_by_byte(message, public_key)
-    print(f"After Encrypted : {encrypted_bytes}")
+message = "ISC Hello World"
 
-    decrypted = decrypt_message_byte_by_byte(encrypted_bytes, private_key)
-    print(f"After Decrypted : {decrypted}")
-    """
+print(f"Before Encrypted : {message}")
+
+encrypted_bytes = encrypt_message_byte_by_byte(message, public_key)
+print(f"After Encrypted : {encrypted_bytes}")
+
+decrypted = decrypt_message_byte_by_byte(encrypted_bytes, private_key)
+print(f"After Decrypted : {decrypted}")

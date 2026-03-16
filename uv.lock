@@ -183,6 +183,7 @@ dependencies = [
     { name = "ipykernel" },
     { name = "keyboard" },
     { name = "pyside6" },
+    { name = "timer" },
 ]
 
 [package.metadata]
@@ -190,6 +191,7 @@ requires-dist = [
     { name = "ipykernel", specifier = ">=7.2.0" },
     { name = "keyboard", specifier = ">=0.13.5" },
     { name = "pyside6", specifier = ">=6.10.2" },
+    { name = "timer", specifier = ">=0.3.0" },
 ]
 
 [[package]]
@@ -3114,6 +3116,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/28/e3/55dcc2cfbc3ca9c29519eb6884dd1415ecb53b0e934862d3559ddcb7e20b/stack_data-0.6.3.tar.gz", hash = "sha256:836a778de4fec4dcd1dcd89ed8abff8a221f58308462e1c4aa2a3cf30148f0b9", size = 44707, upload-time = "2023-09-30T13:58:05.479Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f1/7b/ce1eafaf1a76852e2ec9b22edecf1daa58175c090266e9f6c64afcd81d91/stack_data-0.6.3-py3-none-any.whl", hash = "sha256:d5558e0c25a4cb0853cddad3d77da9891a08cb85dd9f9f91b9f8cd66e511e695", size = 24521, upload-time = "2023-09-30T13:58:03.53Z" },
+]
+
+[[package]]
+name = "timer"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/2f/73/4f181969840995cfc3e160108ff91a9732c40578e1e2e0ea9a42a56bd543/timer-0.3.0.tar.gz", hash = "sha256:9b11b71a48648f878dc4c29aa84387806d193ed9f71a39e84edb10f38ed6941f", size = 7364, upload-time = "2024-05-21T04:06:56.427Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d3/25/6b3dd2c9f899562718d6781d7ad8f1608ba760c4cb5c20730a7e9f0cc7f2/timer-0.3.0-py3-none-any.whl", hash = "sha256:7d97061be15de87d309697c3088a30af58712bd60c971536161fccc0e3d051f3", size = 7968, upload-time = "2024-05-21T04:06:55.407Z" },
 ]
 
 [[package]]
