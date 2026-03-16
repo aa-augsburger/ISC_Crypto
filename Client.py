@@ -1,4 +1,4 @@
-
+import msvcrt
 import sys
 
 from MessageHandler import MessageHandler
@@ -55,6 +55,7 @@ class Client:
                             self.quit()
                         case "/clear":
                             self.clear()
+
                         case "/show":
                             self.show()
                         case "/list":
@@ -70,6 +71,19 @@ class Client:
                                 self.debug(False)
                         case "/list":
                             self.list(inputTab[1])
+                        case "/decode":
+                            match inputTab[1]:
+                                case "shift":
+                                    print("Tentative de décodage")
+                                    self.decode_shift(self.buffer[1])
+                                    msg_awaited = 0
+                                    change_buffer = True
+                                case "vigenere":
+                                    self.decode_vigenere(self.buffer[0], inputTab[2])
+                                    msg_awaited = 1
+                                    change_buffer = True
+
+
                 case 3:
                     match inputTab[0]:
                         case "/encode":
@@ -82,16 +96,6 @@ class Client:
                                     self.encode_vigenere(self.buffer[1], inputTab[2])
                                     change_buffer = True
                                     msg_awaited = 1
-                        case "/decode":
-                            match inputTab[1]:
-                                case "shift":
-                                    self.decode_shift(self.buffer[1], inputTab[2])
-                                    msg_awaited = 1
-                                    change_buffer = True
-                                case "vigenere":
-                                    self.decode_vigenere(self.buffer[1], inputTab[2])
-                                    msg_awaited = 2
-                                    change_buffer = True
 
         if self.debug_mode: print(f"Message attendu-s : {msg_awaited}")
         return msg_awaited, change_buffer
@@ -104,17 +108,22 @@ class Client:
             print(line)
 
     def eavedrop(self):
-        print("====== MODE ECOUTE ACTIVE ======")
-        print("Ctrl + C pour sortir")
+        print("===== MODE ECOUTE =====")
         try:
             while True:
                 data = self.networkManager.receive()
                 if data:
                     msg = self.messageHandler.parse_text_message(data)
                     print(f"[EAVESDROP] {msg}")
-        except KeyboardInterrupt:
-            print("====== FIN DU MODE ECOUTE ======")
-            return
+                if msvcrt.kbhit():
+                    key = msvcrt.getch().decode().lower()
+                    if key == 'q':
+                        print("\n===== FIN DU MODE ECOUTE =====")
+                        break
+        except Exception as e:
+            print(f"[ERREUR] {e}")
+
+
 
 
     def health(self):
@@ -172,11 +181,15 @@ class Client:
         msg_encoded = shift_int(list_int, shift_value)
         if self.debug_mode: print(f"Encryption : {msg_encoded}")
         self.send_msg(msg_encoded, True, True)
-    def decode_shift(self,encoded_msg, shift_value):
-        msg_decoded = unshift(encoded_msg,int(shift_value))
+    def decode_shift(self,encoded_msg):
+        encoded_int = self.messageHandler.string_to_ints(encoded_msg)
+        if self.debug_mode: print(f"Encoded Int : {encoded_int}")
+        unshifted_int = decode_shift_int(encoded_int)
+        for i in unshifted_int:
+            print(self.messageHandler.ints_to_string(i))
+        if self.debug_mode: print(f"Encoded Int : {encoded_int}")
 
-        if self.debug_mode: print(f"Decryption : {msg_decoded}")
-        self.send_msg(msg_decoded)
+#        self.send_msg()
 
     def encode_vigenere(self, msg, key):
         #msg_encoded = vigenere_encrypt(msg,key)
