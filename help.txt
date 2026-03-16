@@ -7,7 +7,7 @@ AVAILABLE COMMANDS
 /send <text>|plain|encoded [-s]     - Send text or buffer
 /clear                              - Clear the screen
 /clearbuf [plain|encoded]           - Clear buffers
-/debug [true|false                  - Enable or disable debug mode
+/debug [true|false]                  - Enable or disable debug mode
 /set <plain|encoded> <text>         - Set buffer
 /show                               - Show current buffers
 /listen                             - Listen to the message on the server
