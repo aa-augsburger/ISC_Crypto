@@ -16,7 +16,7 @@ def unshift_int(int_list, shift_value):
 
 def decode_shift_int(int_list):
     output = []
-    for s in range(26):
+    for s in range(25):
         shifted_list = unshift_int(int_list, s)
         output.append(shifted_list)
     return output

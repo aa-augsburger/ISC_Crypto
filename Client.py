@@ -42,6 +42,10 @@ class Client:
             self.send_command(input)
             msg_awaited = 2
             change_buffer = True
+        if(inputTab[0][0].isdigit()):
+            self.send_command(inputTab[0])
+            msg_awaited = 1
+
         else:
             match len(inputTab):
                 case 1:
@@ -75,7 +79,8 @@ class Client:
                             match inputTab[1]:
                                 case "shift":
                                     print("Tentative de décodage")
-                                    self.decode_shift(self.buffer[1])
+                                    if len(self.buffer) == 1: self.decode_shift(self.buffer[1])
+                                    else: print("Pas de message à décoder")
                                     msg_awaited = 0
                                     change_buffer = True
                                 case "vigenere":
