@@ -10,7 +10,7 @@ from Crypto.Shift import *
 from Crypto.Vigenere import *
 from Crypto.RSA import *
 
-class Client:
+class Client_CLI:
 
     def __init__(self, address, port):
         self.debug_mode =  False
@@ -29,10 +29,11 @@ class Client:
         try:
             parsing_return = self.parseInput(input)
         except Exception as e:
-            print(f"Erreur dans le parsing {e}")
+            print(f"Erreur dans le parsing - {e}")
 
         msg_awaited = parsing_return[0]
         change_buffer = parsing_return[1]
+        if self.debug_mode: print(f"MSG AWAITED: {msg_awaited} - CHANGE BUFFER: {change_buffer}")
         if change_buffer:
             self.buffer = self.messageHandler.add_data(msg_awaited)
             self.messageHandler.get_messages(self.buffer)
@@ -116,6 +117,16 @@ class Client:
                                     self.encode_vigenere(self.buffer[1], inputTab[2])
                                     change_buffer = True
                                     msg_awaited = 1
+                
+                case 4:
+                    match inputTab[0]:
+                        case "/encode":
+                            match inputTab[1]:
+                                case "RSA":
+                                    self.encode_rsa(self.buffer[1], inputTab[2], inputTab[3])
+                                    change_buffer = True
+                                    msg_awaited = 1
+
 
         if self.debug_mode: print(f"Message attendu-s : {msg_awaited}")
         return msg_awaited, change_buffer
@@ -245,4 +256,14 @@ class Client:
         print(f"==============================")
 
         return rsa_keys
+
+    def encode_rsa(self, msg, modulo, public_exp):
+        if self.debug_mode: print(f"==== LOADING RSA =====")
+        msg_int = self.messageHandler.string_to_ints(msg)
+        if self.debug_mode: print(f"INT LIST TO BE ENCRYPTED : {msg_int}")
+        encoded = encrypt_RSA(msg_int, (int(modulo), int(public_exp)))
+        if self.debug_mode: print(f"Encryption : {encoded}")
+        self.send_msg(encoded, True, True)
+
+
 

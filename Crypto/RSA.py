@@ -36,9 +36,9 @@ def is_prime(n):
         i += 6
     return True
 
-
+#permet de calculer l'inverse modulaire
 def mod_inverse(a, m):
-    def extended_gcd(a, b):
+    def extended_gcd(a, b): #algo euclide étendu
         if a == 0:
             return b, 0, 1
         gcd, x1, y1 = extended_gcd(b % a, a)
@@ -63,40 +63,40 @@ def generate_keypair():
     while p == q:
         q = generate_small_prime()
 
-    n = p * q
+    mod = p * q
     phi = (p - 1) * (q - 1)
 
-    e = 65537
-    while e >= phi:
-        e = random.randint(3, 100)
-        if math.gcd(e, phi) != 1:
-            e = 65537
+    public_exp = 65537
+    while public_exp >= phi:
+        public_exp = random.randint(3, 100)
+        if math.gcd(public_exp, phi) != 1:
+            public_exp = 65537
 
-    d = mod_inverse(e, phi)
+    private_exp = mod_inverse(public_exp, phi)
 
-    return (n, e), (n, d)
+    return (mod, public_exp), (mod, private_exp)
 
 
-def encrypt_message_byte_by_byte(message, public_key):
+def encrypt_RSA(message, public_key):
     n, e = public_key
     encrypted = []
 
-    for byte in message:
-        if byte >= n:
+    for nb in message:
+        if nb >= n:
             # should not happen if we chose n big enough
             raise ValueError(f"TOO BIG")
 
-        enc_byte = pow(byte, e, n)
+        enc_byte = pow(nb, e, n)
         encrypted.append(enc_byte)
 
     return encrypted
 
 
-def decrypt_message_byte_by_byte(encrypted_bytes, private_key):
+def decrypt_RSA(encrypted_int_list, private_key):
     n, d = private_key
     decrypted = []
 
-    for enc_byte in encrypted_bytes:
+    for enc_byte in encrypted_int_list:
         dec_byte = pow(enc_byte, d, n)
         decrypted.append(dec_byte)
 

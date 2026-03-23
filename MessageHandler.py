@@ -45,6 +45,7 @@ class MessageHandler:
             num = int.from_bytes(utf8_bytes, byteorder='little')
             output.append(num)
         return output
+
     #convertir liste de nombre en text utf-8
     def ints_to_string(self, int_list):
         output = ""
@@ -154,3 +155,5 @@ class MessageHandler:
     def send_message(self, message, isServer=True, is_ints_list=False):
         msg = self.create_text_message(message, isServer, is_ints_list)
         self.networkManager.send(msg)
+
+
