@@ -1,6 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import QFile
+from PySide6.QtCore import QFile, QTime
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtNetwork import QTcpSocket, QHostAddress
 from MessageHandler import MessageHandler
@@ -11,6 +11,7 @@ class Client_GUI(QMainWindow):
 
         #Gestion des classes crypto
         self.messageHandler = MessageHandler()
+
 
         #Creation de la fenetre
         super().__init__()
@@ -46,7 +47,7 @@ class Client_GUI(QMainWindow):
         self.socket.connectToHost(host, port)
 
     def connected_to_server(self):
-        self.ui.lbl_server_status.setText("Connecté au serveur")
+        self.ui.lbl_server_status.setText(f"Connecté au serveur à {QTime.currentTime().toString('hh:mm:ss')} ")
     def send_message(self):
         message = self.ui.le_txtToSend.text()
         print(message)
