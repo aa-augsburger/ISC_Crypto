@@ -17,6 +17,7 @@ def start_cli():
 def start_gui():
     app = QApplication(sys.argv)
     window = Client_GUI()
+    window.show()
     sys.exit(app.exec())
 
 

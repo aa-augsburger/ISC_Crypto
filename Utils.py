@@ -24,5 +24,5 @@ def frequential_analysis(ints_list):
 
 
 
-print(ints_to_string(int_list))
+
 

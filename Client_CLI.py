@@ -15,7 +15,7 @@ class Client_CLI:
     def __init__(self, address, port):
         self.debug_mode =  False
         self.networkManager = NetworkManager(address, port)
-        self.messageHandler = MessageHandler(self.networkManager)
+        self.messageHandler = MessageHandler()
         self.buffer = []
         self.message_list = []
         self.debug(True)
@@ -35,7 +35,7 @@ class Client_CLI:
         change_buffer = parsing_return[1]
         if self.debug_mode: print(f"MSG AWAITED: {msg_awaited} - CHANGE BUFFER: {change_buffer}")
         if change_buffer:
-            self.buffer = self.messageHandler.add_data(msg_awaited)
+            self.buffer = self.add_data(msg_awaited)
             self.messageHandler.get_messages(self.buffer)
             for msg in self.buffer:
                 self.message_list.append(f"Serveur : {msg}")
@@ -44,16 +44,31 @@ class Client_CLI:
         inp = input("Entrer votre commande : ")
         return inp
 
+
+    def add_data(self, msg_awaited):
+        buffer = []
+        msg_rcv = 0
+        while msg_rcv < msg_awaited:
+            data = self.networkManager.receive()
+            msg = self.messageHandler.parse_text_message(data)
+            if msg == "Unknown command or no task running" or msg.startswith("Wrong"):
+                print(f"Message invalide - {msg}")
+                break
+            buffer.append(msg)
+            msg_rcv += 1
+        return buffer
+
+
     def parseInput(self, input):
         inputTab = input.split(" ")
         msg_awaited = 0
         change_buffer = False
 
-        if(inputTab[0][0] != "/"):
+        if inputTab[0][0] != "/":
             self.send_command(input)
             msg_awaited = 2
             change_buffer = True
-        if(inputTab[0][0].isdigit()):
+        elif inputTab[0][0].isdigit():
             self.send_command(inputTab[0])
             msg_awaited = 1
 
@@ -170,7 +185,7 @@ class Client_CLI:
             print(f"Erreur de connexion - {e}")
             return
 
-        if(len(self.messageHandler.add_data(1)) != 0):
+        if len(self.networkManager.add_data(1)) != 0:
             print("Connecté au serveur")
         else:
             print("Connecté au serveur, mais pas de message de retour")
@@ -245,7 +260,8 @@ class Client_CLI:
         pass
 
     def send_msg(self, msg, is_server=True, is_ints_list=False):
-        self.messageHandler.send_message(msg, is_server, is_ints_list)
+        ready_msg = self.messageHandler.create_text_message(msg, is_server, is_ints_list)
+        self.networkManager.send(ready_msg)
 
     def rsa_generate(self):
         rsa_keys = generate_keypair()

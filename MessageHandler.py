@@ -2,10 +2,9 @@ from NetworkManager import NetworkManager
 
 
 class MessageHandler:
-    def __init__(self,nm):
+    def __init__(self):
         print("Message Handler Initiated")
         self.debug_mode = False
-        self.networkManager = nm
 
     # ==========================================
     # CONSTANTS
@@ -106,21 +105,7 @@ class MessageHandler:
     # MESSAGE RECEPTION
     # ==========================================
 
-    #réception séquentielle :
-    #ajouter les nouvelles données recu dans un buffer
-    def add_data(self, msg_awaited):
-        buffer = []
-        msg_rcv = 0
-        while msg_rcv < msg_awaited:
-            data = self.networkManager.receive()
-            msg = self.parse_text_message(data)
-            if msg == "Unknown command or no task running" or msg.startswith("Wrong"):
 
-                print(f"Message invalide - {msg}")
-                break
-            buffer.append(msg)
-            msg_rcv += 1
-        return buffer
     #parcourir le buffer et extraire les messages bruts
     def get_messages(self, buffer):
         for msg in buffer:
@@ -132,11 +117,12 @@ class MessageHandler:
     #extraction final
     #prendre un message ISC brut et extraire le text en clair
     def parse_text_message(self, message, bytes_per_char = BYTES_PER_CHAR):
-        payload = message[6:] #On ne prend pas les 6 premier 0ctet 2 * 3
+        payload = message[6:] #On ne prend pas les 6 premier octet 2 * 3
         if self.debug_mode: print(f"payload : {payload}")
         int_list = self.decode_ints(payload)
-        output = self.ints_to_string(int_list)
-        return output
+        msg = self.ints_to_string(int_list)
+        return msg
+
 
 
     #extraire les données des pixels RGB d'un message ISC avec image dedans
@@ -147,13 +133,3 @@ class MessageHandler:
         length = len(text)
         length_in_bytes = length.to_bytes(2, byteorder='big')
         return length_in_bytes
-
-    # ==========================================
-    #  MESSAGE SENDING
-    # ==========================================
-
-    def send_message(self, message, isServer=True, is_ints_list=False):
-        msg = self.create_text_message(message, isServer, is_ints_list)
-        self.networkManager.send(msg)
-
-

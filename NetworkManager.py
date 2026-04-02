@@ -14,6 +14,8 @@ class NetworkManager():
 
         self.connect(self.server_adress, self.server_port)
 
+    BYTES_PER_CHAR = 4
+
     def connect(self, IP_address, port):
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -38,4 +40,9 @@ class NetworkManager():
     def close(self):
         self.sock.close()
         print("connection closed")
+
+        # réception séquentielle :
+        # ajouter les nouvelles données recu dans un buffer
+
+
 
