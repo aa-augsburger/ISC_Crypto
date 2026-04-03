@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1131</width>
-    <height>758</height>
+    <height>759</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,7 +28,7 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
@@ -81,46 +81,6 @@
                </property>
               </spacer>
              </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QTabWidget" name="cipher_tab">
-             <property name="accessibleName">
-              <string/>
-             </property>
-             <property name="currentIndex">
-              <number>0</number>
-             </property>
-             <widget class="QWidget" name="Shift">
-              <attribute name="title">
-               <string>Shift</string>
-              </attribute>
-             </widget>
-             <widget class="QWidget" name="Vigenere">
-              <attribute name="title">
-               <string>Vigenere</string>
-              </attribute>
-             </widget>
-             <widget class="QWidget" name="RSA">
-              <attribute name="title">
-               <string>RSA</string>
-              </attribute>
-             </widget>
-            </widget>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item>
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
              <item>
               <widget class="QLabel" name="lbl_server_status">
                <property name="text">
@@ -128,41 +88,109 @@
                </property>
               </widget>
              </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout">
-               <item>
-                <widget class="QLineEdit" name="le_host_address">
-                 <property name="text">
-                  <string>vlbelintrocrypto.hevs.ch</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="le_port_server">
-                 <property name="text">
-                  <string>6000</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pb_connection">
-                 <property name="text">
-                  <string>Connection</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pb_test">
-                 <property name="text">
-                  <string>Test</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <widget class="QLineEdit" name="le_host_address">
+               <property name="text">
+                <string>vlbelintrocrypto.hevs.ch</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_port_server">
+               <property name="text">
+                <string>6000</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_connection">
+               <property name="text">
+                <string>Connection</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_test">
+               <property name="text">
+                <string>Test</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
           </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QPushButton" name="pb_ask_encode">
+             <property name="text">
+              <string>Tâche d'encodage</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pb_ask_decode">
+             <property name="text">
+              <string>Tâche de décodage</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sp_length_task">
+             <property name="maximum">
+              <number>300</number>
+             </property>
+             <property name="value">
+              <number>20</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTabWidget" name="cipher_tab">
+           <property name="accessibleName">
+            <string/>
+           </property>
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <widget class="QWidget" name="Shift">
+            <attribute name="title">
+             <string>Shift</string>
+            </attribute>
+           </widget>
+           <widget class="QWidget" name="Vigenere">
+            <attribute name="title">
+             <string>Vigenere</string>
+            </attribute>
+           </widget>
+           <widget class="QWidget" name="RSA">
+            <attribute name="title">
+             <string>RSA</string>
+            </attribute>
+           </widget>
+          </widget>
          </item>
         </layout>
        </item>
@@ -177,7 +205,7 @@
      <x>0</x>
      <y>0</y>
      <width>1131</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
