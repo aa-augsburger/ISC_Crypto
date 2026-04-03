@@ -2,7 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QFile, QTime
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtNetwork import QTcpSocket, QHostAddress
+from PySide6.QtNetwork import QTcpSocket, QHostAddress, QAbstractSocket
 from MessageHandler import MessageHandler
 
 
@@ -23,28 +23,42 @@ class Client_GUI(QMainWindow):
 
         #Creation du QTCP Socket
         self.socket = QTcpSocket(self)
-        self.ui.pb_connection.clicked.connect(self.connect_to_server)
         self.socket.connected.connect(self.connected_to_server)
+        self.socket.stateChanged.connect(self.network_changed)
+        self.ui.pb_connection.clicked.connect(self.connect_to_server)
+        self.ui.pb_test.clicked.connect(self.test_connection)
 
         #Connection
         self.ui.pb_send.clicked.connect(self.send_message)
         self.ui.le_txtToSend.returnPressed.connect(self.send_message)
         self.socket.readyRead.connect(self.receive_message)
 
-    def change_is_server(self):
-        if self.ui.cb_is_server.isChecked():
-            self.is_server = True
-        else:
-            self.is_server = False
-
     def show(self):
         self.ui.show()
 
+    def network_changed(self, state):
+        if state == QAbstractSocket.SocketState.UnconnectedState:
+            curr_state = 'Déconnexion'
+        elif state == QAbstractSocket.SocketState.HostLookupState:
+            curr_state = 'Host Lookup'
+        elif state == QAbstractSocket.SocketState.ConnectingState:
+            curr_state = 'Connexion en cours'
+        elif state == QAbstractSocket.SocketState.ConnectedState:
+            curr_state = 'Connecté'
+        elif state == QAbstractSocket.SocketState.BoundState:
+            curr_state = 'Bound'
+        elif state == QAbstractSocket.SocketState.ClosingState:
+            curr_state = 'Fermeture en cours'
+        self.ui.lbl_server_status.setText(f"{curr_state} à {QTime.currentTime().toString('hh:mm:ss')} ")
+
+    def test_connection(self):
+        pass
     def connect_to_server(self):
         host = self.ui.le_host_address.text()
         port = int(self.ui.le_port_server.text())
         print(f"{host}{port}")
         self.socket.connectToHost(host, port)
+
 
     def connected_to_server(self):
         self.ui.lbl_server_status.setText(f"Connecté au serveur à {QTime.currentTime().toString('hh:mm:ss')} ")
