@@ -3,7 +3,10 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QFile, QTime
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtNetwork import QTcpSocket, QHostAddress, QAbstractSocket
+
+from Crypto.Shift import shift_int
 from MessageHandler import MessageHandler
+import re
 
 
 class Client_GUI(QMainWindow):
@@ -11,6 +14,13 @@ class Client_GUI(QMainWindow):
 
         #Gestion des classes crypto
         self.messageHandler = MessageHandler()
+
+
+        #Variable globale
+        self.task_awaited = "none" #flag pour savoir si on attend une tache du serveur
+        self.nb_msg_task = 0
+        self.buffer = []
+        self.result_list = []
 
 
         #Creation de la fenetre
@@ -31,8 +41,16 @@ class Client_GUI(QMainWindow):
         #Connection
         self.ui.pb_send.clicked.connect(lambda: self.send_message())
         self.ui.le_txtToSend.returnPressed.connect(self.send_message)
-        self.ui.pb_ask_encode.clicked.connect(lambda: self.ask_task(True))
-        self.ui.pb_ask_decode.clicked.connect(lambda: self.ask_task(False))
+        #Shift
+        self.ui.pb_ask_shift_encode.clicked.connect(lambda: self.ask_task(True, self.ui.sp_shift_encode_length.text()))
+        self.ui.pb_ask_shift_decode.clicked.connect(lambda: self.ask_task(False ,self.ui.sp_shift_decode_length.text()))
+        self.ui.pb_shift_encode.clicked.connect(self.shift_encode)
+        self.ui.pb_shift_encode_check.clicked.connect(self.shift_encode_check)
+
+        #connection au serveur au démarrage
+        self.connect_to_server()
+
+
 
     def show(self):
         self.ui.show()
@@ -88,22 +106,59 @@ class Client_GUI(QMainWindow):
                 print(f"Erreur dans le parsing - {e}")
         self.write_log("SERVEUR", msg)
 
+        if self.task_awaited != "none":
+            self.buffer.append(msg)
+        if len(self.buffer) == self.nb_msg_task:
+            match self.task_awaited:
+                case "shift":
+                    self.shift_encode_parser()
+            self.task_awaited = False
+
     def write_log(self, origin, logs):
         self.ui.te_reception.append(f"{QTime.currentTime().toString('hh:mm:ss')} - [{origin}] : {logs}")
 
-    def ask_task(self, is_encode):
+    def ask_task(self, is_encode, task_length = ""):
         mode = ""
-        length = int(self.ui.sp_length_task.text())
-
+        self.task_awaited = True
         match self.ui.cipher_tab.currentIndex():
             case 0:
+                self.nb_msg_task = 2
+                self.task_awaited = "shift"
                 mode = "shift"
             case 1:
                 mode = "vigenere"
-        msg = f"task {mode} {"encode" if is_encode else "decode"} {length}"
+        action = 'encode' if is_encode else 'decode'
+        length = int(task_length) if task_length != '' else ''
+        msg = f"task {mode} {action} {length}"
         print("demande de tache " + msg)
         self.send_message(False, msg, False, True)
         self.write_log("TACHE", msg)
+
+
+    def shift_encode_parser(self):
+        self.ui.te_shift_encode_task.clear()
+        print("Fonction encode shift")
+        key_text = self.buffer[0]
+        match = re.search(r"\d+", key_text)
+        key = match.group()
+        text = self.buffer[1]
+        self.ui.le_shift_encode_key.setText(key)
+        self.ui.te_shift_encode_task.setText(text)
+        print(f"clé{key}")
+        print(f"text{text}")
+        self.buffer.clear()
+
+    def shift_encode(self):
+        print("Fonction shift encode")
+        list_int = self.messageHandler.string_to_ints(self.ui.te_shift_encode_task.toPlainText())
+        msg_encoded = shift_int(list_int, int(self.ui.le_shift_encode_key.text()))
+        self.result_list = msg_encoded
+        self.ui.te_shifted_task.setText(str(msg_encoded))
+
+    def shift_encode_check(self):
+        print("Fonction shift encode check")
+        msg = self.messageHandler.string_to_ints(self.ui.te_shifted_task.toPlainText())
+        self.send_message(False, self.result_list, True)
 
 
 def send_result(self, result):
