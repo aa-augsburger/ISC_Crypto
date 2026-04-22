@@ -226,7 +226,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <item>
                     <widget class="QPushButton" name="pb_shift_encode_check">
                      <property name="text">
-                      <string>Vérifier le résultat</string>
+                      <string>Vérifier le résultat...</string>
                      </property>
                     </widget>
                    </item>
