@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>982</width>
-    <height>814</height>
+    <width>951</width>
+    <height>762</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -145,7 +145,7 @@
             <string/>
            </property>
            <property name="currentIndex">
-            <number>4</number>
+            <number>3</number>
            </property>
            <widget class="QWidget" name="Shift">
             <attribute name="title">
@@ -572,166 +572,188 @@ li.checked::marker { content: &quot;\2612&quot;; }
             <attribute name="title">
              <string>Diffie-Hellman</string>
             </attribute>
-            <widget class="QLabel" name="label_5">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>60</y>
-               <width>141</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Max Random Modulo</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_6">
-             <property name="geometry">
-              <rect>
-               <x>20</x>
-               <y>100</y>
-               <width>131</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Modulor World</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_7">
-             <property name="geometry">
-              <rect>
-               <x>30</x>
-               <y>140</y>
-               <width>131</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Generator</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_8">
-             <property name="geometry">
-              <rect>
-               <x>20</x>
-               <y>180</y>
-               <width>131</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Private A</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_9">
-             <property name="geometry">
-              <rect>
-               <x>20</x>
-               <y>220</y>
-               <width>151</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Public gA</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_10">
-             <property name="geometry">
-              <rect>
-               <x>30</x>
-               <y>260</y>
-               <width>151</width>
-               <height>16</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Public gB</string>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="lineEdit">
-             <property name="geometry">
-              <rect>
-               <x>180</x>
-               <y>50</y>
-               <width>113</width>
-               <height>26</height>
-              </rect>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="lineEdit_2">
-             <property name="geometry">
-              <rect>
-               <x>140</x>
-               <y>100</y>
-               <width>113</width>
-               <height>26</height>
-              </rect>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="lineEdit_3">
-             <property name="geometry">
-              <rect>
-               <x>130</x>
-               <y>140</y>
-               <width>113</width>
-               <height>26</height>
-              </rect>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="lineEdit_4">
-             <property name="geometry">
-              <rect>
-               <x>120</x>
-               <y>180</y>
-               <width>113</width>
-               <height>26</height>
-              </rect>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="lineEdit_5">
-             <property name="geometry">
-              <rect>
-               <x>130</x>
-               <y>210</y>
-               <width>113</width>
-               <height>26</height>
-              </rect>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="lineEdit_6">
-             <property name="geometry">
-              <rect>
-               <x>120</x>
-               <y>250</y>
-               <width>113</width>
-               <height>26</height>
-              </rect>
-             </property>
-            </widget>
-            <widget class="QWidget" name="">
-             <property name="geometry">
-              <rect>
-               <x>30</x>
-               <y>290</y>
-               <width>192</width>
-               <height>28</height>
-              </rect>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_15">
-              <item>
-               <widget class="QLabel" name="label_11">
-                <property name="text">
-                 <string>Mutual Secret</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="lineEdit_7"/>
-              </item>
-             </layout>
-            </widget>
+            <layout class="QVBoxLayout" name="verticalLayout_17">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_20">
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>Max Random Modulo</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="max_modulo">
+                 <property name="maximum">
+                  <number>5000</number>
+                 </property>
+                 <property name="value">
+                  <number>5000</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_dh_mod">
+               <property name="text">
+                <string>Generate Modulo</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_21">
+               <item>
+                <widget class="QLabel" name="txt_mod_word">
+                 <property name="text">
+                  <string>Modular World</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="mod_world">
+                 <property name="maximum">
+                  <number>5000</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_22">
+               <item>
+                <widget class="QLabel" name="ssdsd">
+                 <property name="text">
+                  <string>Generator</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="generator"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_dh_send">
+               <property name="text">
+                <string>Envoyer modulo au serveur</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_25">
+               <item>
+                <widget class="QLabel" name="label_10">
+                 <property name="text">
+                  <string>Public gB</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="gb">
+                 <property name="maximum">
+                  <number>5000</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_dh_key">
+               <property name="text">
+                <string>Génerer notre clé</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_23">
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Private A</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="priv_a">
+                 <property name="maximum">
+                  <number>5000</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_24">
+               <item>
+                <widget class="QLabel" name="label_9">
+                 <property name="text">
+                  <string>Public gA</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="ga">
+                 <property name="maximum">
+                  <number>5000</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_dh_secret">
+               <property name="text">
+                <string>Générer le secret</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_15">
+               <item>
+                <widget class="QLabel" name="label_11">
+                 <property name="text">
+                  <string>Mutual Secret</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="mut_secret">
+                 <property name="maximum">
+                  <number>5000</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_dh_verify">
+               <property name="text">
+                <string>Vérifier le secret</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="txt_difi_result">
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
            <widget class="QWidget" name="hash">
             <attribute name="title">
@@ -895,7 +917,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>982</width>
+     <width>951</width>
      <height>33</height>
     </rect>
    </property>

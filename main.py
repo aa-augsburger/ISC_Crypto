@@ -9,7 +9,7 @@ ADDRESS = "vlbelintrocrypto.hevs.ch"
 PORT = 6000
 
 def start_cli():
-    print("Welcome to ISC Crypto")
+    print("Welcome to ISC Crypto_Algo")
     client = Client_CLI(ADDRESS, PORT)
     while True:
         client.command_controller()

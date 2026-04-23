@@ -6,9 +6,9 @@ import time
 
 from MessageHandler import MessageHandler
 from NetworkManager import NetworkManager
-from Crypto.Shift import *
-from Crypto.Vigenere import *
-from Crypto.RSA import *
+from Crypto_Algo.Shift import *
+from Crypto_Algo.Vigenere import *
+from Crypto_Algo.RSA import *
 
 class Client_CLI:
 

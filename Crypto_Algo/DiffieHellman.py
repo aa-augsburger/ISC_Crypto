@@ -1,22 +1,7 @@
 import secrets
+from Crypto.Util import number
 import random
 
-def is_prime(n):
-    if n == 2 or n == 3: return True
-    if n < 2 or n % 2 == 0: return False
-    if n < 9: return True
-    if n % 3 == 0: return False
-    r = int(n**0.5)
-    # since all primes > 3 are of the form 6n ± 1
-    # start with f=5 (which is prime)
-    # and test f, f+2 for being prime
-    # then loop by 6.
-    f = 5
-    while f <= r:
-        if n % f == 0: return False
-        if n % (f+2) == 0: return False
-        f += 6
-    return True
 
 def find_prime_factors(n):
     factors = list()
@@ -33,9 +18,8 @@ def find_prime_factors(n):
     return factors
 
 def find_generator(p):
-    if not is_prime(p):
+    if not number.isPrime(p):
         return None
-
 
     phi = p - 1
     prime_factors = find_prime_factors(phi)
@@ -51,15 +35,12 @@ def find_generator(p):
 
     return None
 
-def generate_prime_number(minBits=2048):
+def generate_prime_number(max_value):
     while True:
-        num = random.randrange(2**(minBits-1), 2**(minBits))
-        # S'assure que le nombre est impair (tous les nombres premiers sauf 2 sont impairs)
-        if num % 2 == 0:
-            num += 1
-        # Vérifie si le nombre est premier
-        if is_prime(num):
-            return num
+        n = random.randint(2, max_value)
+        if number.isPrime(n):
+            return n
+
         
 def generate_private_key(p):
     return secrets.randbelow(p-3) + 2

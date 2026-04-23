@@ -4,7 +4,7 @@ import random
 from MessageHandler import MessageHandler
 
 """
-Key Generation from ISC Crypto course
+Key Generation from ISC Crypto_Algo course
 
 Select two distinct prime numbers (p and q)
 Calculate n = p × q

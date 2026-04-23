@@ -4,7 +4,7 @@ from PySide6.QtWidgets import *
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("ISC Crypto")
+        self.setWindowTitle("ISC Crypto_Algo")
 
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)

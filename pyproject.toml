@@ -8,4 +8,5 @@ dependencies = [
     "keyboard>=0.13.5",
     "pyside6>=6.10.2",
     "timer>=0.3.0",
+    "util>=0.0.1",
 ]

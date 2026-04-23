@@ -4,10 +4,11 @@ from PySide6.QtCore import QFile, QTime
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtNetwork import QTcpSocket, QHostAddress, QAbstractSocket
 
-from Crypto.Hashing import hashing
-from Crypto.RSA import encrypt_RSA, generate_keypair
-from Crypto.Shift import shift_int
-from Crypto.Vigenere import int_vigenere_encrypt
+from Crypto_Algo.DiffieHellman import generate_prime_number, find_generator
+from Crypto_Algo.Hashing import hashing
+from Crypto_Algo.RSA import encrypt_RSA, generate_keypair
+from Crypto_Algo.Shift import shift_int
+from Crypto_Algo.Vigenere import int_vigenere_encrypt
 from MessageHandler import MessageHandler
 import re
 
@@ -66,7 +67,12 @@ class Client_GUI(QMainWindow):
         self.ui.btn_hash_check.clicked.connect(self.hash_check)
         self.ui.btn_ask_hash_verify.clicked.connect(lambda: self.ask_task(False))
         self.ui.btn_hash_verify.clicked.connect(self.hash_verify)
-        self.ui.btn_hash_verify_check.clicked.connect(self.hash_verify_check)
+        self.ui.btn_dh_mod.clicked.connect(self.generate_modulus)
+        self.ui.btn_dh_send.clicked.connect(self.send_modulus)
+      #  self.ui.btn_dh_key.clicked.connect(self.)
+       # self.ui.btn_dh_secret.clicked.connect(self.)
+       # self.ui.btn_dh_verify.clicked.connect(self.)
+
 
 
 
@@ -159,6 +165,8 @@ class Client_GUI(QMainWindow):
                     self.hash_verify_parser()
                 case "hash_verify_result":
                     self.hash_verify_result()
+                case "DifHel":
+                    self.rcv_key()
 
             self.task_awaited = "none"
             self.nb_msg_task = 0
@@ -185,7 +193,7 @@ class Client_GUI(QMainWindow):
                 self.buffer_manager(mode, 2)
             case 3:
                 mode = "DifHel"
-                self.buffer_manager(mode, 2)
+                self.buffer_manager(mode, 3)
             case 4:
                 hasAction = False
                 mode = 'hash hash' if is_encode else 'hash verify'
@@ -453,3 +461,27 @@ class Client_GUI(QMainWindow):
     def hash_verify_result(self):
         self.ui.lbl_hash_verify_result.setText(self.resultat(self.buffer[0]))
 
+
+        ###############################################################################
+        #
+        #   DIFFIE HELLEMAN
+        #
+        ###############################################################################
+
+    def generate_modulus(self):
+        print("Fonction generate_modulus")
+        max = self.ui.max_modulo.value()
+        prime = generate_prime_number(max)
+        generator = find_generator(prime)
+        self.ui.mod_world.setValue(prime)
+        self.ui.generator.setValue(generator)
+
+    def send_modulus(self):
+        print("Fonction send_modulus")
+        mod = f"{self.ui.mod_world.value()}, {self.ui.generator.value()}"
+        self.buffer_manager("dh rcv gb", 2)
+        self.ask_task(False)
+        self.send_message(False, mod, False)
+    def rcv_key(self):
+        print("Fonction rcv_key")
+        self.ui.gb.setValue(int(self.buffer[2]))
