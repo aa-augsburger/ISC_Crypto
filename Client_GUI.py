@@ -4,7 +4,9 @@ from PySide6.QtCore import QFile, QTime
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtNetwork import QTcpSocket, QHostAddress, QAbstractSocket
 
+from Crypto.RSA import encrypt_RSA
 from Crypto.Shift import shift_int
+from Crypto.Vigenere import int_vigenere_encrypt
 from MessageHandler import MessageHandler
 import re
 
@@ -44,6 +46,12 @@ class Client_GUI(QMainWindow):
         self.ui.btn_ask_shift_decode.clicked.connect(lambda: self.ask_task(False ,self.ui.sp_shift_decode_length.text()))
         self.ui.btn_shift_encode.clicked.connect(self.shift_encode)
         self.ui.btn_shift_encode_check.clicked.connect(self.shift_encode_check)
+        self.ui.btn_vgn_ask_encode.clicked.connect(lambda: self.ask_task(True, self.ui.sp_vgn_length.text()))
+        self.ui.btn_vgn_encode.clicked.connect(self.vgn_encode)
+        self.ui.btn_vgn_check.clicked.connect(self.vgn_encode_check)
+        self.ui.btn_rsa_ask_encode.clicked.connect(lambda: self.ask_task(True, self.ui.sp_rsa_length.text()))
+        self.ui.btn_rsa_encode.clicked.connect(self.rsa_encode)
+        self.ui.btn_rsa_check_encode.clicked.connect(self.rsa_encode_check)
 
         #connection au serveur au démarrage
         self.connect_to_server()
@@ -111,6 +119,15 @@ class Client_GUI(QMainWindow):
                     self.shift_encode_parser()
                 case "shift_encode_result":
                     self.shift_encode_result()
+                case "vigenere":
+                    self.vgn_encode_parser()
+                case "vgn_encode_result":
+                    self.vgn_encode_result()
+                case "RSA":
+                    self.rsa_encode_parser()
+                case "rsa_encode_result":
+                    self.RSA_encode_result()
+
             self.task_awaited = "none"
             self.nb_msg_task = 0
 
@@ -120,11 +137,16 @@ class Client_GUI(QMainWindow):
     def ask_task(self, is_encode, task_length = ""):
         mode = ""
         match self.ui.cipher_tab.currentIndex():
-            case 1:
+            case 0:
                 mode = "shift"
                 self.buffer_manager(mode, 2)
-            case 2:
+            case 1:
                 mode = "vigenere"
+                self.buffer_manager(mode, 2)
+            case 2:
+                mode = "RSA"
+                self.buffer_manager(mode, 2)
+
         action = 'encode' if is_encode else 'decode'
         length = int(task_length) if task_length != '' else ''
         msg = f"task {mode} {action} {length}"
@@ -168,7 +190,7 @@ class Client_GUI(QMainWindow):
     def shift_encode_check(self):
         print("Fonction shift encode check")
         msg = self.messageHandler.string_to_ints(self.ui.te_shifted_task.toPlainText())
-        self.buffer_manager("shift_result", 1)
+        self.buffer_manager("shift_encode_result", 1)
         self.send_message(False, self.result_list, True)
 
     def shift_encode_result(self):
@@ -181,6 +203,39 @@ class Client_GUI(QMainWindow):
 
     #DECODE
 
+    def shift_decode_parser(self):
+        print("Fonction decode shift")
+        key_text = self.buffer[0]
+        match = re.search(r"\d+", key_text)
+        key = match.group()
+        text = self.buffer[1]
+        self.ui.le_shift_decode_key.setText(key)
+        self.ui.te_shift_decode_task.setText(text)
+        print(f"clé{key}")
+        print(f"text{text}")
+
+    def shift_decode(self):
+        print("Fonction shift decode")
+        list_int = self.messageHandler.string_to_ints(self.ui.te_shift_decode_task.toPlainText())
+        msg_decoded = shift_int(list_int, int(self.ui.le_shift_decode_key.text()))
+        self.result_list = msg_decoded
+        txt  = self.messageHandler.ints_to_string(msg_decoded)
+        self.ui.te_shifted_task.setText(f"Message encodé : {txt}\n\nEn liste entier : {self.result_list}")
+
+    def shift_decode_check(self):
+        print("Fonction shift decode check")
+        msg = self.messageHandler.string_to_ints(self.ui.te_shifted_task.toPlainText())
+        self.buffer_manager("shift_decode_result", 1)
+        self.send_message(False, self.result_list, True)
+
+    def shift_decode_result(self):
+        if "correct" in self.buffer[0]:
+            resultat = "L'encodage est correcte"
+        else:
+            resultat = "L'encodage est incorrecte"
+
+        self.ui.lbl_shift_decode_result.setText(resultat)
+
     ###############################################################################
     #
     #   VIGENERE
@@ -188,28 +243,29 @@ class Client_GUI(QMainWindow):
     ###############################################################################
 
     def vgn_encode_parser(self):
-        print("Fonction encode shift")
+        print("Fonction encode vigenere")
         key_text = self.buffer[0]
-        match = re.search(r"\d+", key_text)
+        match = re.search(r"\S+$", key_text)
         key = match.group()
         text = self.buffer[1]
-        self.ui.le_shift_encode_key.setText(key)
-        self.ui.te_shift_encode_task.setText(text)
+        self.ui.txt_vgn_encode_key.setText(key)
+        self.ui.txt_vgn_encode_task.setText(text)
         print(f"clé{key}")
         print(f"text{text}")
 
     def vgn_encode(self):
         print("Fonction shift encode")
-        list_int = self.messageHandler.string_to_ints(self.ui.te_shift_encode_task.toPlainText())
-        msg_encoded = shift_int(list_int, int(self.ui.le_shift_encode_key.text()))
+        int_task = self.messageHandler.string_to_ints(self.ui.txt_vgn_encode_task.toPlainText())
+        int_key = self.messageHandler.string_to_ints(self.ui.txt_vgn_encode_key.text())
+        msg_encoded = int_vigenere_encrypt(int_task, int_key)
         self.result_list = msg_encoded
         txt  = self.messageHandler.ints_to_string(msg_encoded)
-        self.ui.te_shifted_task.setText(f"Message encodé : {txt}\nEn liste entier : {self.result_list}")
+        self.ui.txt_vgn_encoded.setText(f"Message encodé : {txt}\n\nEn liste entier : {self.result_list}")
 
     def vgn_encode_check(self):
-        print("Fonction shift encode check")
+        print("Fonction vgn encode check")
         msg = self.messageHandler.string_to_ints(self.ui.te_shifted_task.toPlainText())
-        self.buffer_manager("shift_encode_result", 1)
+        self.buffer_manager("vgn_encode_result", 1)
         self.send_message(False, self.result_list, True)
 
     def vgn_encode_result(self):
@@ -218,4 +274,46 @@ class Client_GUI(QMainWindow):
         else:
             resultat = "L'encodage est incorrecte"
 
-        self.ui.lbl_shift_encode_result.setText(resultat)
+        self.ui.txt_vgn_encode_result.setText(resultat)
+
+    ###############################################################################
+    #
+    #   RSA
+    #
+    ###############################################################################
+
+    def rsa_encode_parser(self):
+        print("Fonction encode RSA")
+        key_text = self.buffer[0]
+        match = re.search(r"n=(\d+),\s*e=(\d+)", key_text)
+        modulus = int(match.group(1))
+        exponent = int(match.group(2))
+        text = self.buffer[1]
+        self.ui.txt_rsa_en_mod.setText(str(modulus))
+        self.ui.txt_rsa_en_exp.setText(str(exponent))
+        self.ui.txt_rsa_encode_task.setText(text)
+        print(f"text{text}")
+
+    def rsa_encode(self):
+        print("Fonction shift encode")
+        int_task = self.messageHandler.string_to_ints(self.ui.txt_rsa_encode_task.toPlainText())
+        mod = int(self.ui.txt_rsa_en_mod.text())
+        exp = int(self.ui.txt_rsa_en_exp.text())
+        msg_encoded = encrypt_RSA(int_task, (mod, exp))
+        self.result_list = msg_encoded
+        txt  = self.messageHandler.ints_to_string(msg_encoded)
+        self.ui.txt_rsa_encoded.setText(f"Message encodé : {txt}\n\nEn liste entier : {self.result_list}")
+
+    def rsa_encode_check(self):
+        print("Fonction RSA encode check")
+        msg = self.messageHandler.string_to_ints(self.ui.te_shifted_task.toPlainText())
+        self.buffer_manager("rsa_encode_result", 1)
+        self.send_message(False, self.result_list, True)
+
+    def rsa_encode_result(self):
+        if "correct" in self.buffer[0]:
+            resultat = "L'encodage est correcte"
+        else:
+            resultat = "L'encodage est incorrecte"
+
+        self.ui.txt_RSA_encode_result.setText(resultat)

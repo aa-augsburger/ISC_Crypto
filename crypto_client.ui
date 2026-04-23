@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>982</width>
-    <height>817</height>
+    <height>814</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -145,186 +145,8 @@
             <string/>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>2</number>
            </property>
-           <widget class="QWidget" name="xor">
-            <attribute name="title">
-             <string>Xor</string>
-            </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_10">
-             <item>
-              <widget class="QTabWidget" name="tab_xor">
-               <property name="currentIndex">
-                <number>1</number>
-               </property>
-               <widget class="QWidget" name="Encoder">
-                <attribute name="title">
-                 <string>Encoder</string>
-                </attribute>
-                <layout class="QVBoxLayout" name="verticalLayout_13">
-                 <item>
-                  <layout class="QVBoxLayout" name="verticalLayout_12">
-                   <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_13">
-                     <item>
-                      <widget class="QPushButton" name="btn_xor_ask_encode">
-                       <property name="text">
-                        <string>Tâche d'encodage</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="sp_shift_encode_length_4">
-                       <property name="maximum">
-                        <number>300</number>
-                       </property>
-                       <property name="value">
-                        <number>20</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_14">
-                     <item>
-                      <widget class="QLabel" name="label_4">
-                       <property name="text">
-                        <string>Key</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="le_shift_encode_key_4"/>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <widget class="QTextEdit" name="txt_xor_encode_task">
-                     <property name="html">
-                      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-hr { height: 1px; border-width: 0; }
-li.unchecked::marker { content: &quot;\2610&quot;; }
-li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;En attente de tâche...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="btn_xor_encode">
-                     <property name="text">
-                      <string>Encoder le texte</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QTextEdit" name="txt_xor_encoded"/>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="btn_xor_encode_check">
-                     <property name="text">
-                      <string>Vérifier le résultat</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="txt_xor_encode_result">
-                     <property name="text">
-                      <string>TextLabel</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="Decode">
-                <attribute name="title">
-                 <string>Decoder</string>
-                </attribute>
-                <layout class="QVBoxLayout" name="verticalLayout_9">
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_17">
-                   <item>
-                    <widget class="QPushButton" name="btn_xor_ask_decode">
-                     <property name="text">
-                      <string>Tâche d'encodage</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSpinBox" name="sp_shift_encode_length_6">
-                     <property name="maximum">
-                      <number>300</number>
-                     </property>
-                     <property name="value">
-                      <number>20</number>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_9">
-                   <item>
-                    <widget class="QLabel" name="label_6">
-                     <property name="text">
-                      <string>Key</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="le_shift_encode_key_6"/>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <widget class="QTextEdit" name="txt_xor_decode_task">
-                   <property name="html">
-                    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-hr { height: 1px; border-width: 0; }
-li.unchecked::marker { content: &quot;\2610&quot;; }
-li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;En attente de tâche...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="btn_xor_decode">
-                   <property name="text">
-                    <string>Encoder le texte</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QTextEdit" name="txt_xor_decoded"/>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="btn_xor_decode_check">
-                   <property name="text">
-                    <string>Vérifier le résultat</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="txt_xor_decode_result">
-                   <property name="text">
-                    <string>TextLabel</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </widget>
-             </item>
-            </layout>
-           </widget>
            <widget class="QWidget" name="Shift">
             <attribute name="title">
              <string>Shift</string>
@@ -333,7 +155,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item>
               <widget class="QTabWidget" name="tab_shift">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="shift_encode">
                 <attribute name="title">
@@ -411,7 +233,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <item>
                     <widget class="QLabel" name="lbl_shift_encode_result">
                      <property name="text">
-                      <string>TextLabel</string>
+                      <string/>
                      </property>
                     </widget>
                    </item>
@@ -436,7 +258,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                       </widget>
                      </item>
                      <item>
-                      <widget class="QSpinBox" name="sp_shift_encode_length_2">
+                      <widget class="QSpinBox" name="sp_shift_decode_length">
                        <property name="maximum">
                         <number>300</number>
                        </property>
@@ -448,18 +270,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                     </layout>
                    </item>
                    <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_18">
-                     <item>
-                      <widget class="QLabel" name="label_2">
-                       <property name="text">
-                        <string>Key</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="le_shift_encode_key_2"/>
-                     </item>
-                    </layout>
+                    <layout class="QHBoxLayout" name="horizontalLayout_18"/>
                    </item>
                    <item>
                     <widget class="QTextEdit" name="te_shift_encode_task_2">
@@ -478,7 +289,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <item>
                     <widget class="QPushButton" name="pb_shift_encode_2">
                      <property name="text">
-                      <string>Encoder le texte</string>
+                      <string>Decoder le texte</string>
                      </property>
                     </widget>
                    </item>
@@ -543,12 +354,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="le_shift_encode_key_3"/>
+                <widget class="QLineEdit" name="txt_vgn_encode_key"/>
                </item>
               </layout>
              </item>
              <item>
-              <widget class="QTextEdit" name="txt_vgn_decode_task">
+              <widget class="QTextEdit" name="txt_vgn_encode_task">
                <property name="html">
                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -581,7 +392,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item>
               <widget class="QLabel" name="txt_vgn_encode_result">
                <property name="text">
-                <string>TextLabel</string>
+                <string/>
                </property>
               </widget>
              </item>
@@ -601,6 +412,95 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 <attribute name="title">
                  <string>Encoder</string>
                 </attribute>
+                <layout class="QVBoxLayout" name="verticalLayout_9">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_12">
+                   <item>
+                    <widget class="QPushButton" name="btn_rsa_ask_encode">
+                     <property name="text">
+                      <string>Tâche d'encodage</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sp_rsa_length">
+                     <property name="maximum">
+                      <number>300</number>
+                     </property>
+                     <property name="value">
+                      <number>20</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_9">
+                   <item>
+                    <widget class="QLabel" name="label_4">
+                     <property name="text">
+                      <string>N (modulo)</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="txt_rsa_en_mod"/>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_13">
+                   <item>
+                    <widget class="QLabel" name="label_2">
+                     <property name="text">
+                      <string>E (exposant modulo)</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="txt_rsa_en_exp"/>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QTextEdit" name="txt_rsa_encode_task">
+                   <property name="html">
+                    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;En attente de tâche...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btn_rsa_encode">
+                   <property name="text">
+                    <string>Encoder le texte</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTextEdit" name="txt_rsa_encoded"/>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btn_rsa_check_encode">
+                   <property name="text">
+                    <string>Vérifier le résultat</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="txt_rsa_encode_result">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
                <widget class="QWidget" name="RSA_decode">
                 <attribute name="title">
