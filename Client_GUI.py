@@ -39,8 +39,7 @@ class Client_GUI(QMainWindow):
         #Creation du QTCP Socket
         self.socket = QTcpSocket(self)
         self.socket.stateChanged.connect(self.network_changed)
-        self.ui.pb_connection.clicked.connect(self.connect_to_server)
-        self.ui.pb_test.clicked.connect(self.test_connection)
+        self.ui.btn_toggle_connection.clicked.connect(self.toggle_connection)
         self.socket.readyRead.connect(self.receive_message)
 
         #Connection
@@ -69,8 +68,8 @@ class Client_GUI(QMainWindow):
         self.ui.btn_hash_verify.clicked.connect(self.hash_verify)
         self.ui.btn_dh_mod.clicked.connect(self.generate_modulus)
         self.ui.btn_dh_send.clicked.connect(self.send_modulus)
-      #  self.ui.btn_dh_key.clicked.connect(self.)
-       # self.ui.btn_dh_secret.clicked.connect(self.)
+        self.ui.btn_dh_key.clicked.connect(self.generate_key)
+        self.ui.btn_dh_secret.clicked.connect(self.check_secret)
        # self.ui.btn_dh_verify.clicked.connect(self.)
 
 
@@ -90,6 +89,7 @@ class Client_GUI(QMainWindow):
         match  state :
             case QAbstractSocket.SocketState.UnconnectedState:
                 curr_state = 'Déconnecté'
+                self.ui.btn_toggle_connection.setText("Se connecter")
             case QAbstractSocket.SocketState.HostLookupState:
                 curr_state = 'Recherche d hôte'
             case QAbstractSocket.SocketState.ConnectingState:
@@ -97,6 +97,7 @@ class Client_GUI(QMainWindow):
             case QAbstractSocket.SocketState.ConnectedState:
                 curr_state = 'Connecté'
             case QAbstractSocket.SocketState.BoundState:
+                self.ui.btn_toggle_connection.setText("Se déconnecter")
                 curr_state = 'Etat lié'
             case QAbstractSocket.SocketState.ClosingState:
                 curr_state = 'Déconnexion en cours...'
@@ -104,13 +105,23 @@ class Client_GUI(QMainWindow):
         self.write_log("RESEAU", log)
         self.ui.lbl_server_status.setText(f"{QTime.currentTime().toString('hh:mm:ss')} - {log}")
 
-    def test_connection(self):
-        pass
+    def toggle_connection(self):
+        if self.socket.state() == QAbstractSocket.SocketState.ConnectedState:
+            self.disconnect_from_server()
+        else:
+            self.connect_to_server()
+
+
     def connect_to_server(self):
         host = self.ui.le_host_address.text()
-        port = int(self.ui.le_port_server.text())
+        port = int(self.ui.port_server.text())
         print(f"{host}{port}")
         self.socket.connectToHost(host, port)
+
+    def disconnect_from_server(self):
+        self.socket.disconnectFromHost()
+
+
 
     def send_message(self, from_user = True, input = "", is_intlist = False, is_server = True):
         ready_msg = ""
@@ -167,6 +178,10 @@ class Client_GUI(QMainWindow):
                     self.hash_verify_result()
                 case "DifHel":
                     self.rcv_key()
+                case "dh check key":
+                    self.dh_result()
+
+
 
             self.task_awaited = "none"
             self.nb_msg_task = 0
@@ -485,3 +500,17 @@ class Client_GUI(QMainWindow):
     def rcv_key(self):
         print("Fonction rcv_key")
         self.ui.gb.setValue(int(self.buffer[2]))
+
+    def generate_key(self):
+        print("Fonction generate_key")
+
+
+    def check_secret(self):
+        print("Fonction check_key")
+        result = str(self.ui.mut_secret.value())
+        self.buffer_manager("dh check key", 1)
+        self.send_message(False, result, False)
+
+    def dh_result(self):
+        print("Fonction dh_result")
+        self.ui.lbl_decoded_resultat_rsa.setText(self.resultat(self.buffer[0]))
