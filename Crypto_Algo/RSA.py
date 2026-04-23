@@ -36,18 +36,41 @@ def is_prime(n):
         i += 6
     return True
 
-#permet de calculer l'inverse modulaire
-def mod_inverse(a, m):
-    def extended_gcd(a, b): #algo euclide étendu
-        if a == 0:
-            return b, 0, 1
-        gcd, x1, y1 = extended_gcd(b % a, a)
-        x = y1 - (b // a) * x1
-        y = x1
-        return gcd, x, y
+""""#identité de bézout : ax + by = pgcd(a,b)
+PSEUDO CODE ALGO EUCLIDE ETENDU TROUVE SUR WIKIPEDIA
+Entrée : a, b entiers (naturels)
+Sortie : r entier (naturel) et  u, v entiers relatifs tels que r = pgcd(a, b) et r = a*u+b*v
 
-    gcd, x, _ = extended_gcd(a, m)
-    return (x % m + m) % m if gcd == 1 else None
+Initialisation : (r, u, v, r', u', v') := (a, 1, 0, b, 0, 1)
+                  q  quotient entier
+
+les égalités r = a*u+b*v et r' = a*u'+b*v' sont des invariants de boucle
+
+tant que (r' ≠ 0) faire
+    q := r÷r' 
+    (r, u, v, r', u', v') := (r', u', v', r - q *r', u - q*u', v - q*v')
+    fait
+renvoyer (r, u, v)
+PGCD = (nb * coef_nb + (mod * coef_mod)
+On veut 1 = (nb * coef_nb + (mod * coef_mod)
+"""
+def euclid_extended_algo(nb, mod):
+    reste, coeff, v = nb, 1, 0
+    reste_prime, coeff_prime, v_prime = mod, 0, 1
+    q  = 0
+
+    while reste_prime != 0:
+        q = reste // reste_prime
+        reste, coeff, v, reste_prime, coeff_prime, v_prime = reste_prime, coeff_prime, v_prime, reste-q*reste_prime, coeff-q*coeff_prime, v-q*v_prime
+    return (reste,coeff)
+
+
+def private_key_calculator(public_exp, phi):
+    reste, coeff = euclid_extended_algo(public_exp, phi)
+    if coeff < 0: # si le nombre est négatif, on la met dans le nombre positif en lui ajoutant un tour dhorloge phi -3h egal +9h sur horloge
+        coeff = coeff + phi
+    return coeff
+
 
 
 def generate_small_prime():
@@ -64,7 +87,7 @@ def generate_keypair():
         q = generate_small_prime()
 
     mod = p * q
-    phi = (p - 1) * (q - 1)
+    phi = (p - 1) * (q - 1) #phi est la fonction indicatrice Euler
 
     public_exp = 65537
     while public_exp >= phi:
@@ -72,32 +95,32 @@ def generate_keypair():
         if math.gcd(public_exp, phi) != 1:
             public_exp = 65537
 
-    private_exp = mod_inverse(public_exp, phi)
+    private_exp = private_key_calculator(public_exp, phi)
 
     return (mod, public_exp), (mod, private_exp)
 
 
 def encrypt_RSA(message, public_key):
-    n, e = public_key
+    mod, public_exp = public_key
     encrypted = []
 
     for nb in message:
-        if nb >= n:
+        if nb >= mod:
             # should not happen if we chose n big enough
             raise ValueError(f"TOO BIG")
 
-        enc_byte = pow(nb, e, n)
+        enc_byte = pow(nb, public_exp, mod) #fonction pour exponentiation modulaire
         encrypted.append(enc_byte)
 
     return encrypted
 
 
 def decrypt_RSA(encrypted_int_list, private_key):
-    n, d = private_key
+    mod, private_exp = private_key
     decrypted = []
 
     for enc_byte in encrypted_int_list:
-        dec_byte = pow(enc_byte, d, n)
+        dec_byte = pow(enc_byte, private_exp, mod)
         decrypted.append(dec_byte)
 
     return bytes(decrypted)

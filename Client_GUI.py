@@ -388,7 +388,7 @@ class Client_GUI(QMainWindow):
         public_key, private_key = keypair
         self.rsa_key = private_key
         self.public_key = public_key
-        self.ui.txt_rsa_key.setText(f"Clé privée : {public_key}, Clé publique : {private_key}")
+        self.ui.txt_rsa_key.setText(f"Clé publique : {public_key}, Clé privée : {private_key}")
 
     def send_rsa_key(self):
         n, e = self.public_key
