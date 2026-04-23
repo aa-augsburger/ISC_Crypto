@@ -1,5 +1,6 @@
-def hash(text):#enter a texte, it will be hashed into a 256bits word
-    salt = os.urandom(16)
-    combined = salt + text.encode()
-    hashed = hashlib.sha256(combined).hexdigest()
+import os
+import hashlib
+
+def hashing(text):
+    hashed = hashlib.sha256(text.encode('utf-8')).hexdigest()
     return hashed

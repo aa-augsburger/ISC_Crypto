@@ -4,6 +4,7 @@ from PySide6.QtCore import QFile, QTime
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtNetwork import QTcpSocket, QHostAddress, QAbstractSocket
 
+from Crypto.Hashing import hashing
 from Crypto.RSA import encrypt_RSA, generate_keypair
 from Crypto.Shift import shift_int
 from Crypto.Vigenere import int_vigenere_encrypt
@@ -24,6 +25,7 @@ class Client_GUI(QMainWindow):
         self.result_list = []
         self.public_key = ""
         self.rsa_key = ()
+        self.hashed = ""
 
         #Creation de la fenetre
         super().__init__()
@@ -59,6 +61,14 @@ class Client_GUI(QMainWindow):
         self.ui.btn_rsa_send_key.clicked.connect(self.send_rsa_key)
         self.ui.btn_rsa_decode.clicked.connect(self.rsa_decode)
         self.ui.btn_rsa_decoded_check.clicked.connect(self.rsa_decode_check)
+        self.ui.btn_ask_hash.clicked.connect(lambda: self.ask_task(True))
+        self.ui.btn_hash.clicked.connect(self.hash)
+        self.ui.btn_hash_check.clicked.connect(self.hash_check)
+        self.ui.btn_ask_hash_verify.clicked.connect(lambda: self.ask_task(False))
+        self.ui.btn_hash_verify.clicked.connect(self.hash_verify)
+        self.ui.btn_hash_verify_check.clicked.connect(self.hash_verify_check)
+
+
 
 
 
@@ -141,6 +151,14 @@ class Client_GUI(QMainWindow):
                     self.rsa_rcv_encoded()
                 case "rsa_decode_result":
                     self.rsa_decode_result()
+                case "hash hash":
+                    self.hash_parser()
+                case "hash_result":
+                    self.hash_result()
+                case "hash verify":
+                    self.hash_verify_parser()
+                case "hash_verify_result":
+                    self.hash_verify_result()
 
             self.task_awaited = "none"
             self.nb_msg_task = 0
@@ -150,18 +168,30 @@ class Client_GUI(QMainWindow):
 
     def ask_task(self, is_encode, task_length = ""):
         mode = ""
+        hasAction = False
+        action = ""
         match self.ui.cipher_tab.currentIndex():
             case 0:
+                hasAction = True
                 mode = "shift"
                 self.buffer_manager(mode, 2)
             case 1:
+                hasAction = True
                 mode = "vigenere"
                 self.buffer_manager(mode, 2)
             case 2:
+                hasAction = True
                 mode = "RSA"
                 self.buffer_manager(mode, 2)
-
-        action = 'encode' if is_encode else 'decode'
+            case 3:
+                mode = "DifHel"
+                self.buffer_manager(mode, 2)
+            case 4:
+                hasAction = False
+                mode = 'hash hash' if is_encode else 'hash verify'
+                self.buffer_manager(mode, 2)
+        if hasAction:
+            action = 'encode' if is_encode else 'decode'
         length = int(task_length) if task_length != '' else ''
         msg = f"task {mode} {action} {length}"
         print("demande de tache " + msg)
@@ -174,13 +204,18 @@ class Client_GUI(QMainWindow):
         self.buffer.clear()
 
     def resultat(self, text):
-        if "correct" in text:
-            resultat = "L'encodage est correcte"
-        elif "invalid" in text:
-            resultat = "L'encodage est incorrecte"
+        txt_result = ""
+        if "correct"  in text.lower():
+            txt_result = "L'encodage est correcte"
+        elif "invalid" in text.lower():
+            txt_result = "L'encodage est incorrecte"
+        elif text == "The hash corresponds to the sent message":
+            txt_result = "Le hash est correcte"
+        elif text == "The hash does not correspond to the message":
+            txt_result = "Le hash n'est pas correcte"
         else:
-            resultat = "Pas de tâche en cours"
-        return resultat
+            txt_result = "Pas de tâche en cours"
+        return txt_result
 
 
     ###############################################################################
@@ -360,4 +395,61 @@ class Client_GUI(QMainWindow):
     def rsa_decode_result(self):
         self.ui.lbl_decoded_resultat_rsa.setText(self.resultat(self.buffer[0]))
 
+        ###############################################################################
+        #
+        #   HASH
+        #
+        ###############################################################################
+
+    #HASH HASH
+
+    def hash_parser(self):
+        print("Fonction hash parser")
+        text = self.buffer[1]
+        self.ui.txt_hash_task.setPlainText(text)
+
+    def hash(self):
+        print("Fonction hash")
+        text = self.ui.txt_hash_task.toPlainText()
+        msg_encoded = hashing(text)
+        self.ui.txt_hashed.setText(f"{msg_encoded}")
+
+    def hash_check(self):
+        print("Fonction hash check")
+        hashed =  self.ui.txt_hashed.toPlainText()
+        self.buffer_manager("hash_result", 1)
+        self.send_message(False, hashed, False)
+
+    def hash_result(self):
+        self.ui.lbl_hash_result.setText(self.resultat(self.buffer[0]))
+
+        # HASH VERIFY
+
+    def hash_verify_parser(self):
+        print("Fonction hash_verify parser")
+        rcv_msg = self.buffer[1].split("CSI")
+        rcv_text = rcv_msg[0]
+        rcv_hash = rcv_msg[1].replace('\x00', '').replace('@', '')
+
+        self.ui.txt_hash_verify_text.setText(rcv_text)
+        self.ui.txt_hash_verify_hash.setText(rcv_hash)
+
+
+
+    def hash_verify(self):
+        print("Fonction hash_verify")
+        text = self.ui.txt_hash_verify_text.text()
+        msg_encoded = hashing(text)
+        self.ui.txt_hash_verifyed.setText(f"{msg_encoded}")
+
+    def hash_verify_check(self):
+        print("Fonction hash_verify check")
+        ourHash = self.ui.txt_hash_verifyed.text()
+        serverHash = self.ui.txt_hash_verify_hash.text()
+        self.buffer_manager("hash_verify_result", 1)
+        result = "true" if ourHash == serverHash else "false"
+        self.send_message(False, result, False)
+
+    def hash_verify_result(self):
+        self.ui.lbl_hash_verify_result.setText(self.resultat(self.buffer[0]))
 
