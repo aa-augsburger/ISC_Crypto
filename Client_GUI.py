@@ -4,7 +4,7 @@ from PySide6.QtCore import QFile, QTime
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtNetwork import QTcpSocket, QHostAddress, QAbstractSocket
 
-from Crypto.RSA import encrypt_RSA
+from Crypto.RSA import encrypt_RSA, generate_keypair
 from Crypto.Shift import shift_int
 from Crypto.Vigenere import int_vigenere_encrypt
 from MessageHandler import MessageHandler
@@ -22,6 +22,8 @@ class Client_GUI(QMainWindow):
         self.nb_msg_task = 0
         self.buffer = []
         self.result_list = []
+        self.public_key = ""
+        self.rsa_key = ()
 
         #Creation de la fenetre
         super().__init__()
@@ -52,6 +54,14 @@ class Client_GUI(QMainWindow):
         self.ui.btn_rsa_ask_encode.clicked.connect(lambda: self.ask_task(True, self.ui.sp_rsa_length.text()))
         self.ui.btn_rsa_encode.clicked.connect(self.rsa_encode)
         self.ui.btn_rsa_check_encode.clicked.connect(self.rsa_encode_check)
+       # self.ui..clicked.connect(self.)
+        self.ui.btn_generate_rsa.clicked.connect(self.rsa_generate_key)
+        self.ui.btn_rsa_send_key.clicked.connect(self.send_rsa_key)
+        self.ui.btn_rsa_decode.clicked.connect(self.rsa_decode)
+        self.ui.btn_rsa_decoded_check.clicked.connect(self.rsa_decode_check)
+
+
+
 
         #connection au serveur au démarrage
         self.connect_to_server()
@@ -126,7 +136,11 @@ class Client_GUI(QMainWindow):
                 case "RSA":
                     self.rsa_encode_parser()
                 case "rsa_encode_result":
-                    self.RSA_encode_result()
+                    self.rsa_encode_result()
+                case "rsa_rcv_encoded":
+                    self.rsa_rcv_encoded()
+                case "rsa_decode_result":
+                    self.rsa_decode_result()
 
             self.task_awaited = "none"
             self.nb_msg_task = 0
@@ -158,6 +172,15 @@ class Client_GUI(QMainWindow):
         self.nb_msg_task = nb
         self.task_awaited = task
         self.buffer.clear()
+
+    def resultat(self, text):
+        if "correct" in text:
+            resultat = "L'encodage est correcte"
+        elif "invalid" in text:
+            resultat = "L'encodage est incorrecte"
+        else:
+            resultat = "Pas de tâche en cours"
+        return resultat
 
 
     ###############################################################################
@@ -194,12 +217,7 @@ class Client_GUI(QMainWindow):
         self.send_message(False, self.result_list, True)
 
     def shift_encode_result(self):
-        if "correct" in self.buffer[0]:
-            resultat = "L'encodage est correcte"
-        else:
-            resultat = "L'encodage est incorrecte"
-
-        self.ui.lbl_shift_encode_result.setText(resultat)
+        self.ui.lbl_shift_encode_result.setText(self.resultat(self.buffer[0]))
 
     #DECODE
 
@@ -229,12 +247,7 @@ class Client_GUI(QMainWindow):
         self.send_message(False, self.result_list, True)
 
     def shift_decode_result(self):
-        if "correct" in self.buffer[0]:
-            resultat = "L'encodage est correcte"
-        else:
-            resultat = "L'encodage est incorrecte"
-
-        self.ui.lbl_shift_decode_result.setText(resultat)
+        self.ui.lbl_shift_decode_result.setText(self.resultat(self.buffer[0]))
 
     ###############################################################################
     #
@@ -269,12 +282,7 @@ class Client_GUI(QMainWindow):
         self.send_message(False, self.result_list, True)
 
     def vgn_encode_result(self):
-        if "correct" in self.buffer[0]:
-            resultat = "L'encodage est correcte"
-        else:
-            resultat = "L'encodage est incorrecte"
-
-        self.ui.txt_vgn_encode_result.setText(resultat)
+        self.ui.txt_vgn_encode_result.setText(self.resultat(self.buffer[0]))
 
     ###############################################################################
     #
@@ -295,7 +303,7 @@ class Client_GUI(QMainWindow):
         print(f"text{text}")
 
     def rsa_encode(self):
-        print("Fonction shift encode")
+        print("Fonction rsa encode")
         int_task = self.messageHandler.string_to_ints(self.ui.txt_rsa_encode_task.toPlainText())
         mod = int(self.ui.txt_rsa_en_mod.text())
         exp = int(self.ui.txt_rsa_en_exp.text())
@@ -311,9 +319,45 @@ class Client_GUI(QMainWindow):
         self.send_message(False, self.result_list, True)
 
     def rsa_encode_result(self):
-        if "correct" in self.buffer[0]:
-            resultat = "L'encodage est correcte"
-        else:
-            resultat = "L'encodage est incorrecte"
+        self.ui.txt_rsa_encode_result.setText(self.resultat(self.buffer[0]))
 
-        self.ui.txt_RSA_encode_result.setText(resultat)
+# RSA DECODE
+
+    def rsa_generate_key(self):
+        self.ask_task(False, self.ui.rsa_decode_length.text())
+        print("Fonction RSA generate key")
+        keypair = generate_keypair()
+        public_key, private_key = keypair
+        self.rsa_key = private_key
+        self.public_key = public_key
+        self.ui.txt_rsa_key.setText(f"Clé privée : {public_key}, Clé publique : {private_key}")
+
+    def send_rsa_key(self):
+        n, e = self.public_key
+        key = f"{n}, {e}"
+        print(f"RSA PUBLIC KEY {key}")
+        self.send_message(False, key, False)
+        self.buffer_manager("rsa_rcv_encoded", 1)
+
+    def rsa_rcv_encoded(self):
+        self.ui.txt_rsa_rcv.setText(self.buffer[0])
+
+    def rsa_decode(self):
+        print("Fonction rsa decode")
+        text = self.ui.txt_rsa_rcv.toPlainText()
+        int_list = list(map(int, text.split()))
+        msg_encoded = encrypt_RSA(int_list, self.rsa_key)
+        self.result_list = msg_encoded
+        txt  = self.messageHandler.ints_to_string(msg_encoded)
+        self.ui.txt_rsa_decoded.setText(f"Message décodé : {txt}\n\nEn liste entier : {self.result_list}")
+
+    def rsa_decode_check(self):
+        print("Fonction rsa decode check")
+        msg = self.messageHandler.string_to_ints(self.ui.te_shifted_task.toPlainText())
+        self.buffer_manager("rsa_decode_result", 1)
+        self.send_message(False, self.result_list, True)
+
+    def rsa_decode_result(self):
+        self.ui.lbl_decoded_resultat_rsa.setText(self.resultat(self.buffer[0]))
+
+

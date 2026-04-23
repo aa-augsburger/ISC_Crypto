@@ -406,7 +406,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item>
               <widget class="QTabWidget" name="tab_RSA">
                <property name="currentIndex">
-                <number>0</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="RSA_encode">
                 <attribute name="title">
@@ -506,6 +506,63 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 <attribute name="title">
                  <string>Decoder</string>
                 </attribute>
+                <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_14">
+                   <item>
+                    <widget class="QPushButton" name="btn_generate_rsa">
+                     <property name="text">
+                      <string>Générer une clé</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="rsa_decode_length">
+                     <property name="value">
+                      <number>20</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="txt_rsa_key"/>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btn_rsa_send_key">
+                   <property name="text">
+                    <string>Envoyer la clé au serveur</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTextEdit" name="txt_rsa_rcv"/>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btn_rsa_decode">
+                   <property name="text">
+                    <string>Décoder le résultat</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTextEdit" name="txt_rsa_decoded"/>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btn_rsa_decoded_check">
+                   <property name="text">
+                    <string>Vérifier le résultat</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="lbl_decoded_resultat_rsa">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </widget>
              </item>
@@ -520,7 +577,42 @@ li.checked::marker { content: &quot;\2612&quot;; }
             <attribute name="title">
              <string>Hash</string>
             </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_11"/>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <item>
+              <widget class="QPushButton" name="btn_ask_hask">
+               <property name="text">
+                <string>Demander une tâche de Hash</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPlainTextEdit" name="txt_hash_task"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_hash">
+               <property name="text">
+                <string>Hasher le texte</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTextEdit" name="lbl_hashed"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_check_hash">
+               <property name="text">
+                <string>Vérifier le résultat</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="lbl_hash_result">
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </widget>
          </item>
