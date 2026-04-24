@@ -210,7 +210,7 @@ class Client_GUI(QMainWindow):
     def ask_task(self, is_encode, task_length = ""):
         mode = ""
         action = ""
-        match self.ui.cipher_tab.currentIndex():
+        match self.ui.cipher_tab.currentIndex():         #selectionne la tache selon l'index des onglets
             case 0:
                 mode = "shift encode" if is_encode else "shift decode"
                 self.buffer_manager(mode, 2)
