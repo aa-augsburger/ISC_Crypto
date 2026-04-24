@@ -58,6 +58,7 @@ class Client_CLI:
             msg_rcv += 1
         return buffer
 
+#Fonction qui permet d'interpréter les commandes dans la console
 
     def parseInput(self, input):
         inputTab = input.split(" ")
@@ -66,7 +67,10 @@ class Client_CLI:
 
         if inputTab[0][0] != "/":
             self.send_command(input)
-            msg_awaited = 2
+            if "RSA decode" in input or "," in input:
+                msg_awaited = 1
+            else:
+                msg_awaited = 2
             change_buffer = True
         elif inputTab[0][0].isdigit():
             self.send_command(inputTab[0])
@@ -101,7 +105,7 @@ class Client_CLI:
                                 self.debug(False)
                         case "/list":
                             self.list(inputTab[1])
-                        case "/rsa":
+                        case "/RSA":
                             if inputTab[1] == "generate":
                                 self.rsa_generate()
                         case "/decode":
@@ -118,6 +122,7 @@ class Client_CLI:
                                     self.decode_vigenere(self.buffer[0], inputTab[2])
                                     msg_awaited = 1
                                     change_buffer = True
+
 
 
                 case 3:
@@ -139,6 +144,12 @@ class Client_CLI:
                             match inputTab[1]:
                                 case "RSA":
                                     self.encode_rsa(self.buffer[1], inputTab[2], inputTab[3])
+                                    change_buffer = True
+                                    msg_awaited = 1
+                        case "/decode":
+                            match inputTab[1]:
+                                case "RSA":
+                                    self.encode_rsa(self.buffer[0], inputTab[1], inputTab[2])
                                     change_buffer = True
                                     msg_awaited = 1
 
@@ -236,13 +247,10 @@ class Client_CLI:
     def decode_shift(self,encoded_msg):
         encoded_int = self.messageHandler.string_to_ints(encoded_msg)
         if self.debug_mode: print(f"Encoded Int : {encoded_int}")
-        unshifted_int = decode_shift_int(encoded_int)
+        guessed_key = key_finder(encoded_int)
         shift = 0
-        for i in unshifted_int:
-            print(f"Shift {shift} : {self.messageHandler.ints_to_string(i)}")
-            shift += 1
+        print(f"The guessed key is : {guessed_key}")
 
-#        self.send_msg()
 
     def encode_vigenere(self, msg, key):
         #msg_encoded = vigenere_encrypt(msg,key)
@@ -280,6 +288,15 @@ class Client_CLI:
         encoded = encrypt_RSA(msg_int, (int(modulo), int(public_exp)))
         if self.debug_mode: print(f"Encryption : {encoded}")
         self.send_msg(encoded, True, True)
+
+    def decode_rsa(self, msg, modulo, private_exp):
+        if self.debug_mode: print(f"==== LOADING RSA =====")
+        msg_int = self.messageHandler.string_to_ints(msg)
+        if self.debug_mode: print(f"INT LIST TO BE DECRYPTED : {msg_int}")
+        decoded = decrypt_RSA(msg_int, (int(modulo), int(private_exp)))
+        if self.debug_mode: print(f"Encryption : {decoded}")
+        self.send_msg(decoded, True, True)
+
 
 
 

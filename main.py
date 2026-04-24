@@ -20,6 +20,7 @@ def start_gui():
     window.show()
     sys.exit(app.exec())
 
+#Pour lancer le programme, utiliser la commande python main.py cli pour le CLi et python main.py gui pour le GUI
 
 if __name__ == '__main__':
     mode = sys.argv[1]

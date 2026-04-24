@@ -806,7 +806,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item>
               <widget class="QTabWidget" name="tabWidget">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <property name="tabBarAutoHide">
                 <bool>false</bool>
@@ -846,7 +846,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                  <item>
                   <widget class="QLabel" name="lbl_hash_result">
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string/>
                    </property>
                   </widget>
                  </item>

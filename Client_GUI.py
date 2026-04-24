@@ -8,7 +8,7 @@ from Crypto_Algo.DiffieHellman import generate_prime_number, find_generator, gen
     compute_shared_key
 from Crypto_Algo.Hashing import hashing
 from Crypto_Algo.RSA import encrypt_RSA, generate_keypair
-from Crypto_Algo.Shift import shift_int, frequential_analysis, unshift_int
+from Crypto_Algo.Shift import shift_int, key_finder, unshift_int
 from Crypto_Algo.Vigenere import int_vigenere_encrypt
 from MessageHandler import MessageHandler
 import re
@@ -81,9 +81,12 @@ class Client_GUI(QMainWindow):
         #connection au serveur au démarrage
         self.connect_to_server()
 
+#on montre la fenetre
     def show(self):
         self.ui.show()
 
+
+# trigger quand la connection au réseau change
     def network_changed(self, state):
         curr_state = state
         match  state :
@@ -107,13 +110,14 @@ class Client_GUI(QMainWindow):
         self.write_log("RESEAU", log)
         self.ui.lbl_server_status.setText(f"{QTime.currentTime().toString('hh:mm:ss')} - {log}")
 
+#permet de modifier le comportemetn du bouton connexion selon l'etat
     def toggle_connection(self):
         if self.socket.state() == QAbstractSocket.SocketState.ConnectedState:
             self.disconnect_from_server()
         else:
             self.connect_to_server()
 
-
+#fn pour se connecter au server
     def connect_to_server(self):
         host = self.ui.le_host_address.text()
         port = int(self.ui.port_server.text())
@@ -124,7 +128,7 @@ class Client_GUI(QMainWindow):
         self.socket.disconnectFromHost()
 
 
-
+#envoie d'un message au serveur
     def send_message(self, from_user = True, input = "", is_intlist = False, is_server = True):
         ready_msg = ""
         msg = ""
@@ -140,6 +144,8 @@ class Client_GUI(QMainWindow):
             self.socket.write(ready_msg)
             print("Message envoye : " + msg)
 
+#trigger quand un msg est recu
+
     def receive_message(self):
         data = self.socket.readAll().data()
         msg = ""
@@ -153,10 +159,13 @@ class Client_GUI(QMainWindow):
         self.write_log("SERVEUR", msg)
 
         print(self.task_awaited)
+        #si une tache est en cours, on ajoute le message dans un buffer
+
         if self.task_awaited != "none":
             print("ajout de message dans le buffer")
             self.buffer.append(msg)
             print(len(self.buffer))
+        #permet d'appeler la bonne fonction selon la tache en cours
         if len(self.buffer) == self.nb_msg_task:
             match self.task_awaited:
                 case "shift encode":
@@ -194,10 +203,10 @@ class Client_GUI(QMainWindow):
                     self.rcv_key_2()
                 case "dh check key":
                     self.dh_result()
-
+#permet d'ecrire des logs
     def write_log(self, origin, logs):
         self.ui.te_reception.append(f"{QTime.currentTime().toString('hh:mm:ss')} - [{origin}] : {logs}")
-
+#permet de demander une tache au serveur avec la bonne structure en ne sélectionnant que le bon onglet
     def ask_task(self, is_encode, task_length = ""):
         mode = ""
         action = ""
@@ -223,16 +232,17 @@ class Client_GUI(QMainWindow):
         self.send_message(False, msg, False, True)
         self.write_log("TACHE", msg)
 
+#permet de gerer le buffer de reception avec les variables globales
     def buffer_manager(self, task, nb, clear = True):
         self.nb_msg_task = nb
         self.task_awaited = task
         if clear:
             self.buffer.clear()
-
+#permet d'effacer le buffer quand une tache est terminée
     def clear_buffer(self):
         self.task_awaited = "none"
         self.nb_msg_task = 0
-
+#affiche le message de resultat en francais
     def resultat(self, text):
         txt_result = ""
         if "correct"  in text.lower():
@@ -300,7 +310,7 @@ class Client_GUI(QMainWindow):
     def shift_decode(self):
         print("Fonction shift decode")
         list_int = self.messageHandler.string_to_ints(self.ui.txt_shift_decode_task.toPlainText())
-        guess_key = frequential_analysis(list_int)
+        guess_key = key_finder(list_int)
         print("Guess key : ", guess_key)
         msg_decoded = unshift_int(list_int, guess_key)
         self.result_list = msg_decoded

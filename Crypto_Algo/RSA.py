@@ -21,19 +21,19 @@ Decryption
 m = c^d mod n (applied byte by byte)
 """
 
-
+#permet de verifier si un nombre est premier
 def is_prime(n):
-    if n <= 1:
+    if n <= 1:                      #cas triviaux
         return False
     if n <= 3:
         return True
-    if n % 2 == 0 or n % 3 == 0:
+    if n % 2 == 0 or n % 3 == 0:      #test si n est un diviseur de 2 ou de 3
         return False
-    i = 5
-    while i * i <= n:
-        if n % i == 0 or n % (i + 2) == 0:
+    i = 5                   #on commence a 5
+    while i * i <= n: #on test  jusqua a la racine carré de n
+        if n % i == 0 or n % (i + 2) == 0:      #(test de 5 et de 7) diviseur de notre nombre
             return False
-        i += 6
+        i += 6  #on passe à 11 (test 11 et 13) est diviseur de notre n et ainsi de suite
     return True
 
 """"#identité de bézout : ax + by = pgcd(a,b)
@@ -64,9 +64,9 @@ def euclid_extended_algo(nb, mod):
         reste, coeff, v, reste_prime, coeff_prime, v_prime = reste_prime, coeff_prime, v_prime, reste-q*reste_prime, coeff-q*coeff_prime, v-q*v_prime
     return (reste,coeff)
 
-
+#permet de calculer la cle privé
 def private_key_calculator(public_exp, phi):
-    reste, coeff = euclid_extended_algo(public_exp, phi)
+    reste, coeff = euclid_extended_algo(public_exp, phi) #la cle privé est l'inverse modulaire de la cle publique dans un anneau de taille phi
     if coeff < 0: # si le nombre est négatif, on la met dans le nombre positif en lui ajoutant un tour dhorloge phi -3h egal +9h sur horloge
         coeff = coeff + phi
     return coeff
@@ -79,18 +79,18 @@ def generate_small_prime():
         if is_prime(p):
             return p
 
-
+#generer la paire de cle RSA
 def generate_keypair():
     p = generate_small_prime()
     q = generate_small_prime()
     while p == q:
         q = generate_small_prime()
 
-    mod = p * q
+    mod = p * q     #botre modulo
     phi = (p - 1) * (q - 1) #phi est la fonction indicatrice Euler
 
     public_exp = 65537
-    while public_exp >= phi:
+    while public_exp >= phi:        #on test si public_exp et phi nont pas de diviseur commun
         public_exp = random.randint(3, 100)
         if math.gcd(public_exp, phi) != 1:
             public_exp = 65537
@@ -104,12 +104,13 @@ def encrypt_RSA(message, public_key):
     mod, public_exp = public_key
     encrypted = []
 
+#on parcours chaque nombre qui constitue le message
     for nb in message:
         if nb >= mod:
             # should not happen if we chose n big enough
             raise ValueError(f"TOO BIG")
 
-        enc_byte = pow(nb, public_exp, mod) #fonction pour exponentiation modulaire
+        enc_byte = pow(nb, public_exp, mod) #fonction pour exponentiation modulaire built in de python pour la performance
         encrypted.append(enc_byte)
 
     return encrypted
