@@ -7,7 +7,7 @@ from PySide6.QtNetwork import QTcpSocket, QHostAddress, QAbstractSocket
 from Crypto_Algo.DiffieHellman import generate_prime_number, find_generator
 from Crypto_Algo.Hashing import hashing
 from Crypto_Algo.RSA import encrypt_RSA, generate_keypair
-from Crypto_Algo.Shift import shift_int
+from Crypto_Algo.Shift import shift_int, frequential_analysis, unshift_int
 from Crypto_Algo.Vigenere import int_vigenere_encrypt
 from MessageHandler import MessageHandler
 import re
@@ -50,6 +50,7 @@ class Client_GUI(QMainWindow):
         self.ui.btn_ask_shift_decode.clicked.connect(lambda: self.ask_task(False ,self.ui.sp_shift_decode_length.text()))
         self.ui.btn_shift_encode.clicked.connect(self.shift_encode)
         self.ui.btn_shift_encode_check.clicked.connect(self.shift_encode_check)
+        self.ui.btn_shift_decode.clicked.connect(self.shift_decode)
         self.ui.btn_vgn_ask_encode.clicked.connect(lambda: self.ask_task(True, self.ui.sp_vgn_length.text()))
         self.ui.btn_vgn_encode.clicked.connect(self.vgn_encode)
         self.ui.btn_vgn_check.clicked.connect(self.vgn_encode_check)
@@ -286,17 +287,17 @@ class Client_GUI(QMainWindow):
         key = match.group()
         text = self.buffer[1]
         self.ui.le_shift_decode_key.setText(key)
-        self.ui.te_shift_decode_task.setText(text)
-        print(f"clé{key}")
-        print(f"text{text}")
+        self.ui.txt_shift_decode_task.setText(text)
+
 
     def shift_decode(self):
         print("Fonction shift decode")
-        list_int = self.messageHandler.string_to_ints(self.ui.te_shift_decode_task.toPlainText())
-        msg_decoded = shift_int(list_int, int(self.ui.le_shift_decode_key.text()))
+        list_int = self.messageHandler.string_to_ints(self.ui.txt_shift_decode_task.toPlainText())
+        guess_key = frequential_analysis(list_int)
+        msg_decoded = unshift_int(list_int, guess_key)
         self.result_list = msg_decoded
         txt  = self.messageHandler.ints_to_string(msg_decoded)
-        self.ui.te_shifted_task.setText(f"Message encodé : {txt}\n\nEn liste entier : {self.result_list}")
+        self.ui.txt_shift_deocode_log.setText(f"Message décodé : {txt}\n\nEn liste entier : {self.result_list}")
 
     def shift_decode_check(self):
         print("Fonction shift decode check")
