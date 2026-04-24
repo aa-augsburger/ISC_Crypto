@@ -147,7 +147,7 @@
             <string/>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>3</number>
            </property>
            <widget class="QWidget" name="Shift">
             <attribute name="title">
@@ -597,7 +597,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                <item>
                 <widget class="QLabel" name="label_5">
                  <property name="text">
-                  <string>Max Random Modulo</string>
+                  <string>Valeur maximum du modulo</string>
                  </property>
                 </widget>
                </item>
@@ -616,7 +616,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item>
               <widget class="QPushButton" name="btn_dh_mod">
                <property name="text">
-                <string>Generate Modulo</string>
+                <string>Générer le modulo</string>
                </property>
               </widget>
              </item>
@@ -643,7 +643,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                <item>
                 <widget class="QLabel" name="ssdsd">
                  <property name="text">
-                  <string>Generator</string>
+                  <string>Générateur</string>
                  </property>
                 </widget>
                </item>
@@ -664,12 +664,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                <item>
                 <widget class="QLabel" name="label_10">
                  <property name="text">
-                  <string>Public gB</string>
+                  <string>Clé public reçu (gB)</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="gb">
+                <widget class="QSpinBox" name="pub_gb">
                  <property name="maximum">
                   <number>5000</number>
                  </property>
@@ -689,7 +689,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                <item>
                 <widget class="QLabel" name="label_8">
                  <property name="text">
-                  <string>Private A</string>
+                  <string>Ma clé privée (a)</string>
                  </property>
                 </widget>
                </item>
@@ -707,12 +707,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
                <item>
                 <widget class="QLabel" name="label_9">
                  <property name="text">
-                  <string>Public gA</string>
+                  <string>Ma clé publique (gA)</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="ga">
+                <widget class="QSpinBox" name="pub_ga">
                  <property name="maximum">
                   <number>5000</number>
                  </property>
@@ -732,7 +732,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                <item>
                 <widget class="QLabel" name="label_11">
                  <property name="text">
-                  <string>Mutual Secret</string>
+                  <string>Secret mutuel</string>
                  </property>
                 </widget>
                </item>

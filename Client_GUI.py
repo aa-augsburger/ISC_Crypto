@@ -4,7 +4,8 @@ from PySide6.QtCore import QFile, QTime
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtNetwork import QTcpSocket, QHostAddress, QAbstractSocket
 
-from Crypto_Algo.DiffieHellman import generate_prime_number, find_generator
+from Crypto_Algo.DiffieHellman import generate_prime_number, find_generator, generate_private_key, generate_public_key, \
+    compute_shared_key
 from Crypto_Algo.Hashing import hashing
 from Crypto_Algo.RSA import encrypt_RSA, generate_keypair
 from Crypto_Algo.Shift import shift_int, frequential_analysis, unshift_int
@@ -71,8 +72,8 @@ class Client_GUI(QMainWindow):
         self.ui.btn_dh_mod.clicked.connect(self.generate_modulus)
         self.ui.btn_dh_send.clicked.connect(self.send_modulus)
         self.ui.btn_dh_key.clicked.connect(self.generate_key)
-        self.ui.btn_dh_secret.clicked.connect(self.check_secret)
-       # self.ui.btn_dh_verify.clicked.connect(self.)
+        self.ui.btn_dh_secret.clicked.connect(self.generate_secret)
+        self.ui.btn_dh_verify.clicked.connect(self.check_secret)
 
 
         #connection au serveur au démarrage
@@ -230,6 +231,10 @@ class Client_GUI(QMainWindow):
             txt_result = "Le hash est correcte"
         elif text == "The hash does not correspond to the message":
             txt_result = "Le hash n'est pas correcte"
+        elif text == "The shared secret has been validated !":
+            txt_result = "Le secret commun a été validé"
+        elif text == "The shared secret is not the same as the server, try again":
+            txt_result = "Le secret commun N'a PAS été validé !"
         else:
             txt_result = "Pas de tâche en cours"
         return txt_result
@@ -491,10 +496,28 @@ class Client_GUI(QMainWindow):
         self.send_message(False, mod, False)
     def rcv_key(self):
         print("Fonction rcv_key")
-        self.ui.gb.setValue(int(self.buffer[2]))
+        self.ui.pub_gb.setValue(int(self.buffer[2]))
 
     def generate_key(self):
         print("Fonction generate_key")
+        mod_world = self.ui.mod_world.value()
+        generator = self.ui.generator.value()
+        private_a = generate_private_key(mod_world)
+        self.ui.priv_a.setValue(private_a)
+
+        public_ga = generate_public_key(generator, private_a, mod_world)
+        self.ui.pub_ga.setValue(public_ga)
+        self.send_message(False, str(public_ga), False)
+
+    def generate_secret(self):
+        print("Fonction generate_secret")
+        public_key = self.ui.pub_gb.value()
+        secret_key = self.ui.priv_a.value()
+        mod = self.ui.mod_world.value()
+        mutual_secret = compute_shared_key(public_key, secret_key, mod)
+        self.ui.mut_secret.setValue(mutual_secret)
+
+
 
 
     def check_secret(self):
@@ -505,4 +528,4 @@ class Client_GUI(QMainWindow):
 
     def dh_result(self):
         print("Fonction dh_result")
-        self.ui.lbl_decoded_resultat_rsa.setText(self.resultat(self.buffer[0]))
+        self.ui.txt_difi_result.setText(self.resultat(self.buffer[0]))

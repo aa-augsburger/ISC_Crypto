@@ -42,14 +42,14 @@ def generate_prime_number(max_value):
             return n
 
         
-def generate_private_key(p):
-    return secrets.randbelow(p-3) + 2
+def generate_private_key(mod):
+    return secrets.randbelow(mod - 3) + 2
 
-def generate_public_key(g, private_key, p):
-    return pow(g, private_key, p)
+def generate_public_key(g, private_key, mod):
+    return pow(g, private_key, mod)
 
-def compute_shared_key(public_key, private_key, p):
-    return pow(public_key, private_key, p)
+def compute_shared_key(public_key, private_key, mod):
+    return pow(public_key, private_key, mod)
 
 def Diffie_Hellman():
     p = generate_prime_number(2048)
