@@ -147,7 +147,7 @@
             <string/>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="Shift">
             <attribute name="title">
@@ -655,7 +655,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item>
               <widget class="QPushButton" name="btn_dh_send">
                <property name="text">
-                <string>Envoyer modulo au serveur</string>
+                <string>Envoyer espace modulaire au serveur</string>
                </property>
               </widget>
              </item>

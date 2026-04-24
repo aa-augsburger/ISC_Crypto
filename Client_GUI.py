@@ -94,8 +94,8 @@ class Client_GUI(QMainWindow):
                 curr_state = 'Connexion en cours...'
             case QAbstractSocket.SocketState.ConnectedState:
                 curr_state = 'Connecté'
-            case QAbstractSocket.SocketState.BoundState:
                 self.ui.btn_toggle_connection.setText("Se déconnecter")
+            case QAbstractSocket.SocketState.BoundState:
                 curr_state = 'Etat lié'
             case QAbstractSocket.SocketState.ClosingState:
                 curr_state = 'Déconnexion en cours...'
@@ -146,8 +146,11 @@ class Client_GUI(QMainWindow):
                 print(f"Erreur dans le parsing - {e}")
         self.write_log("SERVEUR", msg)
 
+        print(self.task_awaited)
         if self.task_awaited != "none":
+            print("ajout de message dans le buffer")
             self.buffer.append(msg)
+            print(len(self.buffer))
         if len(self.buffer) == self.nb_msg_task:
             match self.task_awaited:
                 case "shift encode":
@@ -179,14 +182,12 @@ class Client_GUI(QMainWindow):
                 case "hash_verify_result":
                     self.hash_verify_result()
                 case "DifHel":
-                    self.rcv_key()
+                    self.rcv_key_1()
+                case "rcv_key_2":
+                    print("rcv key 2")
+                    self.rcv_key_2()
                 case "dh check key":
                     self.dh_result()
-
-
-
-            self.task_awaited = "none"
-            self.nb_msg_task = 0
 
     def write_log(self, origin, logs):
         self.ui.te_reception.append(f"{QTime.currentTime().toString('hh:mm:ss')} - [{origin}] : {logs}")
@@ -206,7 +207,7 @@ class Client_GUI(QMainWindow):
                 self.buffer_manager(mode, 2)
             case 3:
                 mode = "DifHel"
-                self.buffer_manager(mode, 3)
+                self.buffer_manager(mode, 2)
             case 4:
                 mode = 'hash hash' if is_encode else 'hash verify'
                 self.buffer_manager(mode, 2)
@@ -216,16 +217,17 @@ class Client_GUI(QMainWindow):
         self.send_message(False, msg, False, True)
         self.write_log("TACHE", msg)
 
-    def buffer_manager(self, task, nb):
+    def buffer_manager(self, task, nb, clear = True):
         self.nb_msg_task = nb
         self.task_awaited = task
-        self.buffer.clear()
+        if clear:
+            self.buffer.clear()
 
     def resultat(self, text):
         txt_result = ""
         if "correct"  in text.lower():
             txt_result = "L'encodage est correcte"
-        elif "invalid" in text.lower():
+        elif "invalid" in text.lower() or "not" in text.lower():
             txt_result = "L'encodage est incorrecte"
         elif text == "The hash corresponds to the sent message":
             txt_result = "Le hash est correcte"
@@ -491,11 +493,31 @@ class Client_GUI(QMainWindow):
     def send_modulus(self):
         print("Fonction send_modulus")
         mod = f"{self.ui.mod_world.value()}, {self.ui.generator.value()}"
-        self.buffer_manager("dh rcv gb", 2)
         self.ask_task(False)
         self.send_message(False, mod, False)
-    def rcv_key(self):
-        print("Fonction rcv_key")
+
+    #permet la gestion si le serveur envoie la clé en 1 message ou en séparer
+    def rcv_key_1(self):
+        print("Fonction rcv_key 1")
+        print(self.buffer[1])
+        if "CSI" in self.buffer[1]:
+            print("parsing csi")
+            rcv_msg = self.buffer[1].split("CSI")
+            rcv_key = rcv_msg[1].replace('\x00', '')
+            cleaned_key = ""
+            for c in rcv_key:
+                if c.isdigit():
+                    cleaned_key += c
+
+            print(cleaned_key)
+            self.ui.pub_gb.setValue(int(cleaned_key))
+        else:
+            print("on attend la clé séparement")
+            self.buffer_manager("rcv_key_2", 3, False)
+
+
+    def rcv_key_2(self):
+        print("Fonction rcv_key 2")
         self.ui.pub_gb.setValue(int(self.buffer[2]))
 
     def generate_key(self):
@@ -516,8 +538,6 @@ class Client_GUI(QMainWindow):
         mod = self.ui.mod_world.value()
         mutual_secret = compute_shared_key(public_key, secret_key, mod)
         self.ui.mut_secret.setValue(mutual_secret)
-
-
 
 
     def check_secret(self):
