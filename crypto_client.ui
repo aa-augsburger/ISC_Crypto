@@ -315,7 +315,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   </layout>
                  </item>
                  <item>
-                  <widget class="QTextEdit" name="txt_shift_deocde_log"/>
+                  <widget class="QTextEdit" name="txt_shift_decode_log"/>
                  </item>
                  <item>
                   <widget class="QPushButton" name="btn_shift_decode_verify">

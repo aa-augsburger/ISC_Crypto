@@ -51,6 +51,7 @@ class Client_GUI(QMainWindow):
         self.ui.btn_shift_encode.clicked.connect(self.shift_encode)
         self.ui.btn_shift_encode_check.clicked.connect(self.shift_encode_check)
         self.ui.btn_shift_decode.clicked.connect(self.shift_decode)
+        self.ui.btn_shift_decode_verify.clicked.connect(self.shift_decode_check)
         self.ui.btn_vgn_ask_encode.clicked.connect(lambda: self.ask_task(True, self.ui.sp_vgn_length.text()))
         self.ui.btn_vgn_encode.clicked.connect(self.vgn_encode)
         self.ui.btn_vgn_check.clicked.connect(self.vgn_encode_check)
@@ -72,11 +73,6 @@ class Client_GUI(QMainWindow):
         self.ui.btn_dh_key.clicked.connect(self.generate_key)
         self.ui.btn_dh_secret.clicked.connect(self.check_secret)
        # self.ui.btn_dh_verify.clicked.connect(self.)
-
-
-
-
-
 
 
         #connection au serveur au démarrage
@@ -153,15 +149,19 @@ class Client_GUI(QMainWindow):
             self.buffer.append(msg)
         if len(self.buffer) == self.nb_msg_task:
             match self.task_awaited:
-                case "shift":
+                case "shift encode":
                     self.shift_encode_parser()
+                case "shift decode":
+                    self.shift_decode_parser()
                 case "shift_encode_result":
                     self.shift_encode_result()
-                case "vigenere":
+                case "shift_decode_result":
+                    self.shift_decode_result()
+                case "vigenere encode":
                     self.vgn_encode_parser()
                 case "vgn_encode_result":
                     self.vgn_encode_result()
-                case "RSA":
+                case "RSA encode":
                     self.rsa_encode_parser()
                 case "rsa_encode_result":
                     self.rsa_encode_result()
@@ -192,33 +192,26 @@ class Client_GUI(QMainWindow):
 
     def ask_task(self, is_encode, task_length = ""):
         mode = ""
-        hasAction = False
         action = ""
         match self.ui.cipher_tab.currentIndex():
             case 0:
-                hasAction = True
-                mode = "shift"
+                mode = "shift encode" if is_encode else "shift decode"
                 self.buffer_manager(mode, 2)
             case 1:
-                hasAction = True
-                mode = "vigenere"
+                mode = "vigenere encode"
                 self.buffer_manager(mode, 2)
             case 2:
-                hasAction = True
-                mode = "RSA"
+                mode = "RSA encode" if is_encode else "RSA decode"
                 self.buffer_manager(mode, 2)
             case 3:
                 mode = "DifHel"
                 self.buffer_manager(mode, 3)
             case 4:
-                hasAction = False
                 mode = 'hash hash' if is_encode else 'hash verify'
                 self.buffer_manager(mode, 2)
-        if hasAction:
-            action = 'encode' if is_encode else 'decode'
         length = int(task_length) if task_length != '' else ''
         msg = f"task {mode} {action} {length}"
-        print("demande de tache " + msg)
+        print("demande de tache " + mode + " - msg: " + msg)
         self.send_message(False, msg, False, True)
         self.write_log("TACHE", msg)
 
@@ -282,11 +275,7 @@ class Client_GUI(QMainWindow):
 
     def shift_decode_parser(self):
         print("Fonction decode shift")
-        key_text = self.buffer[0]
-        match = re.search(r"\d+", key_text)
-        key = match.group()
         text = self.buffer[1]
-        self.ui.le_shift_decode_key.setText(key)
         self.ui.txt_shift_decode_task.setText(text)
 
 
@@ -294,16 +283,18 @@ class Client_GUI(QMainWindow):
         print("Fonction shift decode")
         list_int = self.messageHandler.string_to_ints(self.ui.txt_shift_decode_task.toPlainText())
         guess_key = frequential_analysis(list_int)
+        print("Guess key : ", guess_key)
         msg_decoded = unshift_int(list_int, guess_key)
         self.result_list = msg_decoded
         txt  = self.messageHandler.ints_to_string(msg_decoded)
-        self.ui.txt_shift_deocode_log.setText(f"Message décodé : {txt}\n\nEn liste entier : {self.result_list}")
+        self.ui.guessed_shift.setValue(guess_key)
+        self.ui.txt_shift_decode_log.setText(f"Message décodé : {txt}\n\nEn liste entier : {self.result_list}")
 
     def shift_decode_check(self):
         print("Fonction shift decode check")
-        msg = self.messageHandler.string_to_ints(self.ui.te_shifted_task.toPlainText())
+        key = str(self.ui.guessed_shift.value())
         self.buffer_manager("shift_decode_result", 1)
-        self.send_message(False, self.result_list, True)
+        self.send_message(False, key, False)
 
     def shift_decode_result(self):
         self.ui.lbl_shift_decode_result.setText(self.resultat(self.buffer[0]))
