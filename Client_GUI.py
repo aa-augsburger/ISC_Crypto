@@ -42,6 +42,7 @@ class Client_GUI(QMainWindow):
         self.socket.stateChanged.connect(self.network_changed)
         self.ui.btn_toggle_connection.clicked.connect(self.toggle_connection)
         self.socket.readyRead.connect(self.receive_message)
+        self.isConnected = False
 
         #Connection
         self.ui.pb_send.clicked.connect(lambda: self.send_message())
@@ -69,6 +70,7 @@ class Client_GUI(QMainWindow):
         self.ui.btn_hash_check.clicked.connect(self.hash_check)
         self.ui.btn_ask_hash_verify.clicked.connect(lambda: self.ask_task(False))
         self.ui.btn_hash_verify.clicked.connect(self.hash_verify)
+        self.ui.btn_hash_verify_check.clicked.connect(self.hash_verify_check)
         self.ui.btn_dh_mod.clicked.connect(self.generate_modulus)
         self.ui.btn_dh_send.clicked.connect(self.send_modulus)
         self.ui.btn_dh_key.clicked.connect(self.generate_key)
@@ -87,12 +89,14 @@ class Client_GUI(QMainWindow):
         match  state :
             case QAbstractSocket.SocketState.UnconnectedState:
                 curr_state = 'Déconnecté'
+                self.isConnected = False
                 self.ui.btn_toggle_connection.setText("Se connecter")
             case QAbstractSocket.SocketState.HostLookupState:
                 curr_state = 'Recherche d hôte'
             case QAbstractSocket.SocketState.ConnectingState:
                 curr_state = 'Connexion en cours...'
             case QAbstractSocket.SocketState.ConnectedState:
+                self.isConnected = True
                 curr_state = 'Connecté'
                 self.ui.btn_toggle_connection.setText("Se déconnecter")
             case QAbstractSocket.SocketState.BoundState:
@@ -127,6 +131,8 @@ class Client_GUI(QMainWindow):
         print("on préparer le message")
         if from_user:
             msg = self.ui.le_txtToSend.text()
+            if not self.ui.cb_is_server.isChecked() and self.ui.txt_pseudo.text() != "":
+                msg = self.ui.txt_pseudo.text() + " : " + msg
             ready_msg = self.messageHandler.create_text_message(msg, self.ui.cb_is_server.isChecked(),self.ui.cb_is_intlist.isChecked())
         else:
             ready_msg = self.messageHandler.create_text_message(input, is_server, is_intlist)
@@ -223,12 +229,14 @@ class Client_GUI(QMainWindow):
         if clear:
             self.buffer.clear()
 
+    def clear_buffer(self):
+        self.task_awaited = "none"
+        self.nb_msg_task = 0
+
     def resultat(self, text):
         txt_result = ""
         if "correct"  in text.lower():
             txt_result = "L'encodage est correcte"
-        elif "invalid" in text.lower() or "not" in text.lower():
-            txt_result = "L'encodage est incorrecte"
         elif text == "The hash corresponds to the sent message":
             txt_result = "Le hash est correcte"
         elif text == "The hash does not correspond to the message":
@@ -237,8 +245,11 @@ class Client_GUI(QMainWindow):
             txt_result = "Le secret commun a été validé"
         elif text == "The shared secret is not the same as the server, try again":
             txt_result = "Le secret commun N'a PAS été validé !"
+        elif "invalid" in text.lower() or "not" in text.lower():
+            txt_result = "L'encodage est incorrecte"
         else:
             txt_result = "Pas de tâche en cours"
+        self.clear_buffer()
         return txt_result
 
 
@@ -322,6 +333,8 @@ class Client_GUI(QMainWindow):
         self.ui.txt_vgn_encode_task.setText(text)
         print(f"clé{key}")
         print(f"text{text}")
+        self.clear_buffer()
+
 
     def vgn_encode(self):
         print("Fonction shift encode")
@@ -358,6 +371,8 @@ class Client_GUI(QMainWindow):
         self.ui.txt_rsa_en_exp.setText(str(exponent))
         self.ui.txt_rsa_encode_task.setText(text)
         print(f"text{text}")
+        self.clear_buffer()
+
 
     def rsa_encode(self):
         print("Fonction rsa encode")
@@ -368,6 +383,7 @@ class Client_GUI(QMainWindow):
         self.result_list = msg_encoded
         txt  = self.messageHandler.ints_to_string(msg_encoded)
         self.ui.txt_rsa_encoded.setText(f"Message encodé : {txt}\n\nEn liste entier : {self.result_list}")
+
 
     def rsa_encode_check(self):
         print("Fonction RSA encode check")
@@ -529,7 +545,8 @@ class Client_GUI(QMainWindow):
 
         public_ga = generate_public_key(generator, private_a, mod_world)
         self.ui.pub_ga.setValue(public_ga)
-        self.send_message(False, str(public_ga), False)
+        if self.isConnected:
+            self.send_message(False, str(public_ga), False)
 
     def generate_secret(self):
         print("Fonction generate_secret")
